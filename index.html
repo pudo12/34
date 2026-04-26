@@ -1,153 +1,241 @@
 <!DOCTYPE html>
-<html lang="mn" data-theme="light">
+<html lang="en" data-theme="light" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>34 | Minimal Site</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>34</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  /* Өнгөний тохиргоо (Variables) */
-  :root {
-    --bg: #f8f9fc;
-    --text: #1a1a1a;
-    --card-bg: #ffffff;
-    --border: #e2e8f0;
-    --accent: #1a56db;
-  }
+:root {
+  --bg: #f8f9fc;
+  --bg2: #ffffff;
+  --text: #0d1117;
+  --text2: #4a5568;
+  --blue: #1a56db;
+  --blue-light: #e8effd;
+  --blue-mid: #3b82f6;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --nav-bg: rgba(248,249,252,0.92);
+  --sidebar-bg: #ffffff;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(26,86,219,0.12);
+}
 
-  /* DARK MODE ТОХИРГОО - ЭНД БҮРЭН ХАР БОЛГОЛОО */
-  [data-theme="dark"] {
-    --bg: #000000;      /* Бүрэн хар дэвсгэр */
-    --text: #ffffff;    /* Тод цагаан үсэг */
-    --card-bg: #111111; /* Картууд нь арай сааралдуу хар */
-    --border: #333333;  /* Хүрээ зураас */
-    --accent: #3b82f6;
-  }
+/* DARK MODE - ТАНЫ ХҮССЭНЭЭР БҮРЭН ХАР БОЛГОСОН ХЭСЭГ */
+[data-theme="dark"] {
+  --bg: #000000;         /* Жинхэнэ хар */
+  --bg2: #0a0a0a;        /* Маш бараан саарал */
+  --text: #ffffff;       /* Тод цагаан үсэг */
+  --text2: #cccccc;      /* Сааралдуу цагаан туслах текст */
+  --blue: #3b82f6;
+  --blue-light: #111827;
+  --border: #222222;     /* Бараан хүрээ */
+  --card: #0f0f0f;       /* Картын дэвсгэр хар */
+  --nav-bg: rgba(0,0,0,0.9);
+  --sidebar-bg: #050505;
+  --shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
 
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    transition: all 0.3s ease;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+  font-family: 'Outfit', sans-serif; 
+  background: var(--bg); 
+  color: var(--text); 
+  line-height: 1.6; 
+  transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
 
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 5%;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-  }
+/* Цэсний хэсэг */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  background: var(--nav-bg); backdrop-filter: blur(10px);
+  padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; cursor: pointer; }
+.nav-right { display: flex; gap: 1rem; align-items: center; }
 
-  .logo {
-    font-size: 1.8rem;
-    font-weight: 700;
-    border: 2px solid var(--text);
-    padding: 0 8px;
-  }
+/* Товчлуурууд */
+.btn-icon { 
+  background: none; border: 1px solid var(--border); color: var(--text); 
+  padding: 0.5rem 1rem; border-radius: 2rem; cursor: pointer; font-size: 0.85rem;
+  transition: 0.2s;
+}
+.btn-icon:hover { border-color: var(--blue); color: var(--blue); }
 
-  .theme-toggle {
-    cursor: pointer;
-    padding: 8px 15px;
-    border: 1px solid var(--text);
-    background: transparent;
-    color: var(--text);
-    font-weight: 600;
-  }
+/* Sidebar */
+#sidebar {
+  position: fixed; left: -300px; top: 0; width: 300px; height: 100%;
+  background: var(--sidebar-bg); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2rem; border-right: 1px solid var(--border); box-shadow: var(--shadow);
+}
+#sidebar.active { left: 0; }
+.sidebar-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3); z-index: 1500; display: none;
+}
+.sidebar-overlay.active { display: block; }
 
-  .hero {
-    text-align: center;
-    padding: 4rem 5%;
-  }
+/* Агуулга */
+section { padding: 8rem 10% 4rem; max-width: 1400px; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+.card { 
+  background: var(--card); padding: 2rem; border-radius: 1rem; 
+  border: 1px solid var(--border); transition: 0.3s;
+}
+.card:hover { transform: translateY(-5px); border-color: var(--blue); box-shadow: var(--shadow-lg); }
 
-  .container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 2rem 5%;
-  }
+/* AI Chatbot загвар */
+#chat-widget {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 3000;
+}
+#chat-window {
+  width: 350px; height: 500px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 1.5rem; display: none; flex-direction: column; box-shadow: var(--shadow-lg); overflow: hidden;
+}
+#chat-header { background: var(--blue); color: white; padding: 1rem; font-weight: 600; display: flex; justify-content: space-between; }
+#chat-messages { flex: 1; padding: 1rem; overflow-y: auto; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.8rem; }
+.msg { padding: 0.8rem 1rem; border-radius: 1rem; max-width: 80%; }
+.user { align-self: flex-end; background: var(--blue); color: white; }
+.bot { align-self: flex-start; background: var(--blue-light); color: var(--text); border: 1px solid var(--border); }
+#chat-input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
+#chat-input { flex: 1; border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 2rem; background: var(--bg); color: var(--text); }
 
-  .card {
-    background: var(--card-bg);
-    padding: 2rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    text-align: center;
-    transition: 0.3s;
-  }
-
-  .card:hover {
-    border-color: var(--accent);
-  }
-
-  .btn {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 10px 20px;
-    background: var(--text);
-    color: var(--bg);
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-  }
-
-  footer {
-    text-align: center;
-    padding: 3rem;
-    font-size: 0.8rem;
-    opacity: 0.7;
-  }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">34</div>
-  <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
-</nav>
-
-<section class="hero">
-  <h1>Explore. Learn. Connect.</h1>
-  <p>Minimalist platform for your digital journey.</p>
-</section>
-
-<div class="container">
-  <div class="card">
-    <h2>Online Shop</h2>
-    <p>Curated premium products.</p>
-    <a href="#" class="btn">Shop Now</a>
-  </div>
-  <div class="card">
-    <h2>Training</h2>
-    <p>Expert-led digital courses.</p>
-    <a href="#" class="btn">Learn More</a>
-  </div>
-  <div class="card">
-    <h2>Blog</h2>
-    <p>Insights and AI tutorials.</p>
-    <a href="#" class="btn">Read Posts</a>
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="sidebar">
+  <h2 style="margin-bottom: 2rem;">Menu</h2>
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <p onclick="toggleSidebar()" style="cursor: pointer;">Home</p>
+    <p onclick="toggleSidebar()" style="cursor: pointer;">Shop</p>
+    <p onclick="toggleSidebar()" style="cursor: pointer;">Training</p>
+    <p onclick="toggleSidebar()" style="cursor: pointer;">Blog</p>
   </div>
 </div>
 
-<footer>
-  &copy; 2026 "34" Брэнд.
-</footer>
+<nav>
+  <div class="logo" onclick="toggleSidebar()">34</div>
+  <div class="nav-right">
+    <button class="btn-icon" onclick="toggleLang()" id="langBtn">MN</button>
+    <button class="btn-icon" onclick="toggleTheme()" id="themeBtn">Dark</button>
+  </div>
+</nav>
+
+<section id="content">
+  <h1 id="mainTitle" style="font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; margin-bottom: 1rem;">Explore. Learn. Connect.</h1>
+  <p id="subTitle" style="font-size: 1.2rem; color: var(--text2);">Experience the minimal future with 34.</p>
+  
+  <div class="grid">
+    <div class="card">
+      <h3 class="cardTitle">Online Shop</h3>
+      <p class="cardText" style="margin: 1rem 0; color: var(--text2);">Curated art sets, tech, and wellness kits.</p>
+      <button class="btn-icon">View Store</button>
+    </div>
+    <div class="card">
+      <h3 class="cardTitle">Training</h3>
+      <p class="cardText" style="margin: 1rem 0; color: var(--text2);">Master AI tools, content creation, and business.</p>
+      <button class="btn-icon">Start Learning</button>
+    </div>
+    <div class="card">
+      <h3 class="cardTitle">Blog</h3>
+      <p class="cardText" style="margin: 1rem 0; color: var(--text2);">The latest insights on digital lifestyle.</p>
+      <button class="btn-icon">Read More</button>
+    </div>
+  </div>
+</section>
+
+<div id="chat-widget">
+  <button class="btn-icon" style="width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; background: var(--blue); color: white;" onclick="toggleChat()">AI</button>
+  <div id="chat-window">
+    <div id="chat-header">
+      <span>34 AI Assistant</span>
+      <span style="cursor: pointer;" onclick="toggleChat()">×</span>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Ask anything...">
+      <button class="btn-icon" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  function toggleTheme() {
-    const html = document.documentElement;
-    const btn = document.querySelector('.theme-toggle');
-    
-    if (html.getAttribute('data-theme') === 'light') {
-      html.setAttribute('data-theme', 'dark');
-      btn.innerText = 'Light Mode';
-    } else {
-      html.setAttribute('data-theme', 'light');
-      btn.innerText = 'Dark Mode';
+let currentLang = 'en';
+let currentTheme = 'light';
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+  document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', currentTheme);
+  document.getElementById('themeBtn').innerText = currentTheme === 'light' ? 'Dark' : 'Light';
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'mn' : 'en';
+  document.getElementById('langBtn').innerText = currentLang === 'en' ? 'MN' : 'EN';
+  updateContent();
+}
+
+function updateContent() {
+  const translations = {
+    en: {
+      title: "Explore. Learn. Connect.",
+      sub: "Experience the minimal future with 34.",
+      shop: "Online Shop", shopT: "Curated art sets, tech, and wellness kits.",
+      train: "Training", trainT: "Master AI tools, content creation, and business.",
+      blog: "Blog", blogT: "The latest insights on digital lifestyle."
+    },
+    mn: {
+      title: "Судал. Сур. Холбогд.",
+      sub: "34-тэй хамт минимал ирээдүйг мэдэр.",
+      shop: "Онлайн дэлгүүр", shopT: "Урлаг, технологи, вэллнесс иж бүрдэл.",
+      train: "Сургалт", trainT: "AI хэрэгсэл, контент бүтээх, бизнес сургалт.",
+      blog: "Блог", blogT: "Дижитал амьдралын хамгийн сүүлийн үеийн мэдээ."
     }
-  }
+  };
+  const t = translations[currentLang];
+  document.getElementById('mainTitle').innerText = t.title;
+  document.getElementById('subTitle').innerText = t.sub;
+  const titles = document.querySelectorAll('.cardTitle');
+  const texts = document.querySelectorAll('.cardText');
+  titles[0].innerText = t.shop; texts[0].innerText = t.shopT;
+  titles[1].innerText = t.train; texts[1].innerText = t.trainT;
+  titles[2].innerText = t.blog; texts[2].innerText = t.blogT;
+}
+
+function toggleChat() {
+  const win = document.getElementById('chat-window');
+  win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const box = document.getElementById('chat-messages');
+  box.innerHTML += `<div class="msg user">${msg}</div>`;
+  input.value = '';
+  
+  // Simulated AI Response (Claude-ийн бичсэн логик хэвээр үлдсэн)
+  const tid = Date.now();
+  box.innerHTML += `<div class="msg bot" id="${tid}">...</div>`;
+  box.scrollTop = box.scrollHeight;
+
+  setTimeout(() => {
+    document.getElementById(tid).innerText = currentLang === 'mn' ? "Сайн байна уу! Би 34-ийн туслах байна." : "Hello! I am 34 AI assistant.";
+  }, 1000);
+}
 </script>
 
 </body>
