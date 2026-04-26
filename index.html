@@ -3,74 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>34 Online Shop - UI Version</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>34 Shop | Full Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-bg: #f5f7fb;
+            --primary-bg: #f8fafc;
             --sidebar-bg: #ffffff;
-            --accent-blue: #5c67f2;
-            --text-main: #2d3142;
-            --text-sub: #9094a6;
-            --card-bg: #ffffff;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --accent: #5c67f2;
             --gold: #c8a96e;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --shadow: 0 10px 25px rgba(0,0,0,0.03);
+            --radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--primary-bg); font-family: 'DM Sans', sans-serif; color: var(--text-main); display: flex; min-height: 100vh; }
+        body { background: var(--primary-bg); font-family: 'DM Sans', sans-serif; color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* SIDEBAR */
-        .sidebar { width: 100px; background: var(--sidebar-bg); border-right: 1px solid #eee; display: flex; flex-direction: column; align-items: center; padding: 30px 0; position: fixed; height: 100vh; }
-        .sidebar .logo { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--gold); margin-bottom: 50px; }
-        .nav-icons { display: flex; flex-direction: column; gap: 30px; }
-        .nav-item { cursor: pointer; opacity: 0.4; transition: 0.3s; font-size: 24px; list-style: none; }
-        .nav-item:hover, .nav-item.active { opacity: 1; color: var(--accent-blue); }
+        .sidebar { width: 90px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 30px 0; position: fixed; height: 100vh; z-index: 100; }
+        .sidebar .logo { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--gold); font-weight: 900; margin-bottom: 40px; }
+        .nav-icons { display: flex; flex-direction: column; gap: 25px; list-style: none; }
+        .nav-item { cursor: pointer; padding: 12px; border-radius: 15px; transition: 0.3s; font-size: 22px; position: relative; }
+        .nav-item:hover, .nav-item.active { background: #f1f5f9; color: var(--accent); }
+        .cart-badge { position: absolute; top: 5px; right: 5px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50px; font-weight: bold; }
 
-        /* MAIN CONTENT */
-        .content { margin-left: 100px; flex: 1; padding: 40px; }
-        
-        /* HEADER / SEARCH */
+        /* MAIN */
+        .main-content { margin-left: 90px; flex: 1; padding: 40px; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .search-bar { background: white; padding: 12px 25px; border-radius: 12px; width: 400px; box-shadow: var(--shadow); border: none; outline: none; }
-        .user-profile { display: flex; align-items: center; gap: 15px; background: white; padding: 8px 20px; border-radius: 50px; box-shadow: var(--shadow); cursor: pointer; }
+        .search-container { position: relative; width: 400px; }
+        .search-bar { width: 100%; padding: 15px 25px; border-radius: 15px; border: none; background: var(--white); box-shadow: var(--shadow); outline: none; }
+        .user-section { display: flex; gap: 15px; align-items: center; }
 
-        /* CATEGORIES */
-        .categories { display: flex; gap: 15px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
-        .cat-btn { padding: 10px 25px; background: white; border-radius: 12px; cursor: pointer; border: none; font-weight: 500; transition: 0.3s; white-space: nowrap; box-shadow: var(--shadow); }
-        .cat-btn.active { background: var(--gold); color: white; }
-
-        /* PRODUCT GRID */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
-        .card { background: white; border-radius: 24px; padding: 20px; transition: 0.3s; position: relative; box-shadow: var(--shadow); border: 2px solid transparent; }
+        /* PRODUCT STYLES */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; }
+        .card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); transition: 0.3s; border: 1px solid transparent; }
         .card:hover { transform: translateY(-10px); border-color: var(--gold); }
-        .img-box { width: 100%; aspect-ratio: 1/1; background: #f0f2f5; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 60px; margin-bottom: 15px; overflow: hidden; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .card-title { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
-        .card-meta { color: var(--text-sub); font-size: 13px; margin-bottom: 15px; }
-        .price-row { display: flex; justify-content: space-between; align-items: center; }
-        .price { font-weight: 700; color: var(--gold); }
-        .add-btn { background: var(--primary-bg); border: none; width: 35px; height: 35px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
-        .add-btn:hover { background: var(--gold); color: white; }
+        .img-area { width: 100%; aspect-ratio: 1/1; background: #f1f5f9; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 60px; margin-bottom: 15px; }
+        .card-name { font-weight: 700; margin-bottom: 8px; }
+        .size-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 15px; }
+        .size-tag { background: #f1f5f9; font-size: 11px; padding: 3px 8px; border-radius: 5px; color: var(--text-light); }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .price { font-weight: 900; color: var(--gold); font-size: 18px; }
+        .btn-add { background: var(--text); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; cursor: pointer; font-size: 20px; }
 
-        /* SIZE SELECTOR IN CARD */
-        .size-badge { font-size: 10px; background: #eee; padding: 2px 6px; border-radius: 4px; margin-right: 4px; }
-
-        /* MODAL & UI OVERLAYS */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .overlay.open { display: flex; }
-        .modal { background: white; padding: 40px; border-radius: 32px; width: 90%; max-width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+        /* OVERLAYS & MODALS */
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .overlay.active { display: flex; }
+        .modal { background: var(--white); width: 100%; max-width: 500px; border-radius: 30px; padding: 35px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
         
-        /* FORM STYLES */
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
+        /* FORM ELEMENTS */
+        .form-title { font-family: 'Playfair Display'; font-size: 24px; margin-bottom: 25px; display: flex; justify-content: space-between; }
+        .input-box { margin-bottom: 15px; }
+        .input-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-light); }
+        .input-box input, .input-box select, .input-box textarea { width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-family: inherit; }
+        .btn-action { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .btn-gold { background: var(--gold); }
 
-        /* TOAST */
-        .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #2d3142; color: white; padding: 15px 40px; border-radius: 15px; transition: 0.5s; z-index: 2000; }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+        /* CART LIST */
+        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: var(--text); color: white; padding: 15px 25px; border-radius: 12px; display: none; z-index: 2000; animation: slideIn 0.3s ease; }
 
-        .cart-count { background: #ff4d4d; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50px; position: absolute; top: -5px; right: -5px; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -79,77 +74,88 @@
     <div class="logo">34</div>
     <ul class="nav-icons">
         <li class="nav-item active">🏠</li>
-        <li class="nav-item" onclick="toggleCart()">🛒 <span id="cart-counter" class="cart-count">0</span></li>
-        <li class="nav-item">🔥</li>
-        <li class="nav-item">⭐</li>
-        <li class="nav-item" onclick="openAddModal()" title="Бараа нэмэх">➕</li>
+        <li class="nav-item" onclick="toggleModal('cart-modal')">🛒 <span class="cart-badge" id="cart-count">0</span></li>
+        <li class="nav-item" onclick="toggleModal('add-modal')">➕</li>
+        <li class="nav-item">📊</li>
         <li class="nav-item">⚙️</li>
     </ul>
 </aside>
 
-<main class="content">
+<main class="main-content">
     <header class="header">
-        <input type="text" class="search-bar" placeholder="Бараа хайх..." onkeyup="searchProduct(this.value)">
-        <div class="user-profile" onclick="openAuth()">
-            <span>👤</span>
-            <span id="user-name">Нэвтрэх</span>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Бараа хайх..." onkeyup="searchProducts(this.value)">
+        </div>
+        <div class="user-section">
+            <div style="text-align: right;"><b id="display-user">Зочин</b><br><small>Mongolia</small></div>
+            <div style="width: 45px; height: 45px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
         </div>
     </header>
 
-    <div class="categories" id="cat-list">
-        <button class="cat-btn active" onclick="filterCat('all', this)">All Games</button>
-        <button class="cat-btn" onclick="filterCat('clothes', this)">👗 Clothes</button>
-        <button class="cat-btn" onclick="filterCat('electronics', this)">📱 Gadgets</button>
-        <button class="cat-btn" onclick="filterCat('accessories', this)">⌚ Accessories</button>
-    </div>
-
-    <div class="grid" id="product-grid">
-        </div>
+    <h2 style="margin-bottom: 30px; font-family: 'Playfair Display'; font-size: 32px;">Манай бараанууд</h2>
+    <div class="grid" id="product-grid"></div>
 </main>
 
 <div class="overlay" id="add-modal">
     <div class="modal">
-        <h2 style="margin-bottom: 20px;">Шинэ бараа нэмэх</h2>
-        <div class="input-group">
+        <div class="form-title">Шинэ бараа бүртгэх <span style="cursor:pointer" onclick="toggleModal('add-modal')">✕</span></div>
+        <div class="input-box">
             <label>Барааны нэр</label>
-            <input type="text" id="p-name" placeholder="Жишээ: Air Jordan 1">
+            <input type="text" id="new-name" placeholder="Жишээ: Nike Jordan 1">
         </div>
-        <div class="input-group">
+        <div class="input-box">
             <label>Үнэ (₮)</label>
-            <input type="number" id="p-price" placeholder="250000">
+            <input type="number" id="new-price" placeholder="0">
         </div>
-        <div class="input-group">
-            <label>Ангилал</label>
-            <select id="p-cat">
-                <option value="clothes">Хувцас</option>
-                <option value="electronics">Техник</option>
-                <option value="accessories">Аксессуар</option>
-            </select>
+        <div class="input-box">
+            <label>Хэмжээнүүд (Таслалаар тусгаарла: S, M, L...)</label>
+            <input type="text" id="new-sizes" placeholder="S, M, L, XL">
         </div>
-        <div class="input-group">
-            <label>Боломжит хэмжээ (Size) - Таслалаар тусгаарла</label>
-            <input type="text" id="p-size" placeholder="S, M, L эсвэл 40, 41, 42">
+        <div class="input-box">
+            <label>Зураг (Emoji)</label>
+            <input type="text" id="new-emoji" placeholder="👕">
         </div>
-        <div class="input-group">
-            <label>Emoji (Зургийн оронд)</label>
-            <input type="text" id="p-emoji" placeholder="👟">
-        </div>
-        <button class="cat-btn active" style="width: 100%; padding: 15px;" onclick="saveProduct()">Барааг хадгалах</button>
-        <button style="width: 100%; background: none; border: none; margin-top: 15px; cursor: pointer; color: #888;" onclick="closeModals()">Цуцлах</button>
+        <button class="btn-action btn-gold" onclick="addProduct()">Барааг нэмэх</button>
     </div>
 </div>
 
 <div class="overlay" id="cart-modal">
-    <div class="modal" style="max-width: 500px;">
-        <h2>Таны сагс</h2>
-        <div id="cart-items" style="margin: 20px 0; max-height: 300px; overflow-y: auto;">
+    <div class="modal">
+        <div class="form-title">Таны сагс <span style="cursor:pointer" onclick="toggleModal('cart-modal')">✕</span></div>
+        <div id="cart-items-list" style="margin-bottom: 20px;"></div>
+        
+        <div id="checkout-form" style="display: none; border-top: 2px dashed #eee; pt-20; margin-top: 20px;">
+            <h3 style="margin: 20px 0 15px 0;">Хүргэлтийн мэдээлэл</h3>
+            <div class="input-box">
+                <label>Хүлээн авагчийн нэр</label>
+                <input type="text" id="cust-name" placeholder="Овог нэр">
             </div>
-        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 20px;">
-            <span>Нийт:</span>
-            <span id="cart-total">₮0</span>
+            <div class="input-box">
+                <label>Утасны дугаар</label>
+                <input type="tel" id="cust-phone" placeholder="88******">
+            </div>
+            <div class="input-box">
+                <label>Хүргэлтийн хаяг</label>
+                <textarea id="cust-address" rows="3" placeholder="Дүүрэг, хороо, байр, орц..."></textarea>
+            </div>
+            <div class="input-box">
+                <label>Төлбөрийн хэлбэр</label>
+                <select id="pay-method">
+                    <option value="qpay">QPay (Дансаар)</option>
+                    <option value="cash">Бэлнээр (Хүргэлт дээр)</option>
+                </select>
+            </div>
         </div>
-        <button class="cat-btn active" style="width: 100%; padding: 15px; margin-top: 20px;" onclick="checkout()">Захиалга хийх</button>
-        <button style="width: 100%; background: none; border: none; margin-top: 15px; cursor: pointer;" onclick="closeModals()">Хаах</button>
+
+        <div style="background: #f8fafc; padding: 20px; border-radius: 15px; margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700;">
+                <span>Нийт дүн:</span>
+                <span id="total-price" style="color: var(--gold);">₮0</span>
+            </div>
+        </div>
+
+        <button class="btn-action" id="main-cart-btn" onclick="showCheckout()">Захиалах руу шилжих</button>
+        <button class="btn-action btn-gold" id="final-order-btn" style="display: none;" onclick="completeOrder()">Захиалгыг баталгаажуулах</button>
     </div>
 </div>
 
@@ -157,52 +163,58 @@
 
 <script>
     let products = [
-        {id: 1, name: "Premium Hoodie", price: 125000, cat: "clothes", size: ["S", "M", "L", "XL"], emoji: "🧥", rating: 4.8},
-        {id: 2, name: "Smart Watch V2", price: 450000, cat: "accessories", size: ["40mm", "44mm"], emoji: "⌚", rating: 4.5},
-        {id: 3, name: "AirPods Pro", price: 890000, cat: "electronics", size: ["Standard"], emoji: "🎧", rating: 4.9},
-        {id: 4, name: "Running Sneakers", price: 210000, cat: "clothes", size: ["40", "41", "42", "43"], emoji: "👟", rating: 4.7},
-        {id: 5, name: "Gaming Mouse", price: 185000, cat: "electronics", size: ["One Size"], emoji: "🖱️", rating: 4.6}
+        {id: 1, name: "Luxury Hoodie", price: 150000, sizes: ["S", "M", "L"], emoji: "🧥"},
+        {id: 2, name: "Smart Watch 7", price: 320000, sizes: ["41mm", "45mm"], emoji: "⌚"},
+        {id: 3, name: "Air Jordan Retro", price: 450000, sizes: ["40", "41", "42", "43"], emoji: "👟"}
     ];
     let cart = [];
 
+    // Бараа харуулах
     function renderProducts(data = products) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = data.map(p => `
             <div class="card">
-                <div class="img-box">${p.emoji}</div>
-                <div class="card-title">${p.name}</div>
-                <div class="card-meta">
-                    ⭐ ${p.rating || 5.0} | ${p.size.map(s => `<span class="size-badge">${s}</span>`).join('')}
+                <div class="img-area">${p.emoji}</div>
+                <div class="card-name">${p.name}</div>
+                <div class="size-tags">
+                    ${p.sizes.map(s => `<span class="size-tag">${s}</span>`).join('')}
                 </div>
-                <div class="price-row">
+                <div class="card-footer">
                     <div class="price">₮${p.price.toLocaleString()}</div>
-                    <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+                    <button class="btn-add" onclick="addToCart(${p.id})">+</button>
                 </div>
             </div>
         `).join('');
     }
 
+    // Сагсанд нэмэх
     function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        cart.push(product);
+        const p = products.find(x => x.id === id);
+        cart.push(p);
         updateCartUI();
-        showToast(product.name + " сагсанд орлоо!");
+        showToast(p.name + " сагсанд нэмэгдлээ.");
     }
 
+    // Сагсны UI шинэчлэх
     function updateCartUI() {
-        document.getElementById('cart-counter').textContent = cart.length;
-        const container = document.getElementById('cart-items');
+        document.getElementById('cart-count').textContent = cart.length;
+        const list = document.getElementById('cart-items-list');
         let total = 0;
-        container.innerHTML = cart.map((item, index) => {
-            total += item.price;
-            return `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                    <div><b>${item.name}</b><br><small>₮${item.price.toLocaleString()}</small></div>
-                    <button onclick="removeFromCart(${index})" style="background:none; border:none; color:red; cursor:pointer;">Устгах</button>
-                </div>
-            `;
-        }).join('');
-        document.getElementById('cart-total').textContent = '₮' + total.toLocaleString();
+        
+        if(cart.length === 0) {
+            list.innerHTML = "<p style='color:gray; text-align:center;'>Сагс хоосон байна.</p>";
+        } else {
+            list.innerHTML = cart.map((item, index) => {
+                total += item.price;
+                return `
+                    <div class="cart-item">
+                        <div><b>${item.name}</b><br><small>₮${item.price.toLocaleString()}</small></div>
+                        <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ef4444; cursor:pointer;">Устгах</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        document.getElementById('total-price').textContent = '₮' + total.toLocaleString();
     }
 
     function removeFromCart(index) {
@@ -210,63 +222,74 @@
         updateCartUI();
     }
 
-    function filterCat(cat, btn) {
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if(cat === 'all') renderProducts();
-        else renderProducts(products.filter(p => p.cat === cat));
+    // Захиалгын хэсгийг харуулах
+    function showCheckout() {
+        if(cart.length === 0) return alert("Сагс хоосон байна!");
+        document.getElementById('checkout-form').style.display = 'block';
+        document.getElementById('main-cart-btn').style.display = 'none';
+        document.getElementById('final-order-btn').style.display = 'block';
     }
 
-    function searchProduct(val) {
-        const filtered = products.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
-        renderProducts(filtered);
+    // Захиалга дуусгах
+    function completeOrder() {
+        const name = document.getElementById('cust-name').value;
+        const phone = document.getElementById('cust-phone').value;
+        const address = document.getElementById('cust-address').value;
+
+        if(!name || !phone || !address) return alert("Хүргэлтийн мэдээллийг бүрэн оруулна уу!");
+
+        alert(`Баярлалаа ${name}! Захиалга амжилттай. \nХүргэлт: ${address} \nУтас: ${phone}`);
+        
+        // Reset
+        cart = [];
+        updateCartUI();
+        toggleModal('cart-modal');
+        document.getElementById('checkout-form').style.display = 'none';
+        document.getElementById('main-cart-btn').style.display = 'block';
+        document.getElementById('final-order-btn').style.display = 'none';
     }
 
-    function openAddModal() { document.getElementById('add-modal').classList.add('open'); }
-    function toggleCart() { document.getElementById('cart-modal').classList.add('open'); }
-    function closeModals() { document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open')); }
+    // Шинэ бараа нэмэх
+    function addProduct() {
+        const name = document.getElementById('new-name').value;
+        const price = document.getElementById('new-price').value;
+        const sizes = document.getElementById('new-sizes').value;
+        const emoji = document.getElementById('new-emoji').value;
 
-    function saveProduct() {
-        const name = document.getElementById('p-name').value;
-        const price = document.getElementById('p-price').value;
-        const cat = document.getElementById('p-cat').value;
-        const sizeInput = document.getElementById('p-size').value;
-        const emoji = document.getElementById('p-emoji').value;
-
-        if(!name || !price) { alert("Мэдээллээ бүрэн оруулна уу!"); return; }
+        if(!name || !price) return alert("Мэдээллээ бүрэн оруулна уу!");
 
         const newP = {
             id: Date.now(),
             name: name,
             price: parseInt(price),
-            cat: cat,
-            size: sizeInput.split(',').map(s => s.trim()),
-            emoji: emoji || "📦",
-            rating: 5.0
+            sizes: sizes.split(',').map(s => s.trim()),
+            emoji: emoji || "🎁"
         };
 
         products.unshift(newP);
         renderProducts();
-        closeModals();
-        showToast("Шинэ бараа амжилттай нэмэгдлээ!");
+        toggleModal('add-modal');
+        showToast("Шинэ бараа нэмэгдлээ.");
+    }
+
+    // Бусад функцүүд
+    function toggleModal(id) {
+        document.getElementById(id).classList.toggle('active');
+    }
+
+    function searchProducts(val) {
+        const filtered = products.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+        renderProducts(filtered);
     }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
     }
 
-    function checkout() {
-        if(cart.length === 0) return;
-        alert("Захиалга хүлээн авлаа! Төлбөр хүлээгдэж байна.");
-        cart = [];
-        updateCartUI();
-        closeModals();
-    }
-
-    // Анхны ачаалалт
+    // Эхлэл
     renderProducts();
 </script>
 
