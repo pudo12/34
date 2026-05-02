@@ -417,12 +417,54 @@ nav{padding:0 1.2rem;}
 .nav-center{display:none;}
 .shop-wrap,.contact-wrap,.track-wrap,.admin-wrap{padding-left:1rem;padding-right:1rem;}
 }
+/* ═══ 3D CAROUSEL CSS ═══ */
+.product-stage{perspective:1400px;width:100%;overflow:hidden;position:relative;padding:2rem 0 3rem;cursor:grab;}
+.product-stage:active{cursor:grabbing;}
+.product-track{display:flex;gap:1.6rem;align-items:center;padding:0 calc(50% - 155px);transition:none;will-change:transform;}
+.pcard-3d{
+flex-shrink:0;width:300px;
+background:var(–bg2);border:1px solid var(–border2);
+border-radius:var(–r);overflow:hidden;cursor:pointer;
+transition:all .5s cubic-bezier(0.34,1.1,0.64,1);
+transform-style:preserve-3d;position:relative;
+backdrop-filter:blur(12px);
+box-shadow:0 8px 24px rgba(0,0,0,0.5);
+}
+.pcard-3d.center{
+transform:scale(1.08) translateZ(40px);
+border-color:rgba(200,162,84,0.4);
+box-shadow:0 24px 70px rgba(0,0,0,0.7),var(–shadow-gold);
+z-index:10;
+}
+.pcard-3d.side-l{transform:scale(0.88) translateX(20px) rotateY(14deg) translateZ(-40px);opacity:0.65;}
+.pcard-3d.side-r{transform:scale(0.88) translateX(-20px) rotateY(-14deg) translateZ(-40px);opacity:0.65;}
+.pcard-3d.far-l{transform:scale(0.74) translateX(40px) rotateY(22deg) translateZ(-90px);opacity:0.35;}
+.pcard-3d.far-r{transform:scale(0.74) translateX(-40px) rotateY(-22deg) translateZ(-90px);opacity:0.35;}
+.pcard-3d.hidden{opacity:0;pointer-events:none;}
+.pcard-3d .pcard-img{aspect-ratio:4/3;background:var(–bg3);display:flex;align-items:center;justify-content:center;font-size:3.5rem;overflow:hidden;position:relative;}
+.pcard-3d .pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.pcard-3d.center .pcard-img img{transform:scale(1.04);}
+.pcard-3d .pcard-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(0,0,0,0.5));}
+.carousel-nav{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:-0.5rem;padding-bottom:1rem;}
+.cnav-btn{background:none;border:1px solid var(–border);color:var(–text2);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.cnav-btn:hover{border-color:var(–gold);color:var(–gold);}
+.cnav-dots{display:flex;gap:0.5rem;align-items:center;}
+.cdot{width:5px;height:5px;border-radius:50%;background:var(–border2);cursor:pointer;transition:all .3s;}
+.cdot.active{background:var(–gold);width:16px;border-radius:3px;}
+.view-btns{display:flex;gap:0.4rem;}
+.vb{background:none;border:1px solid var(–border2);color:var(–text2);width:30px;height:30px;border-radius:5px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.vb.active{background:var(–gold);color:#000;border-color:var(–gold);}
+/* detail bg blur */
+.detail-bg-blur{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;filter:blur(35px) saturate(0.4) brightness(0.2);transition:opacity .5s;opacity:0;pointer-events:none;}
+.detail-bg-blur.show{opacity:1;}
 </style>
 
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
+
+<div class="detail-bg-blur" id="detail-bg-blur"></div>
 
 <!-- ═══ NAV ═══ -->
 
@@ -819,15 +861,18 @@ let cats=[
   {id:'other',name:'Бусад',icon:'📦',fields:[]},
 ];
 let products=[
-  {id:1,name:'Nike Air Max 2024',cat:'clothes',status:'ready',pmn:320000,pusd:95,desc:'Тав тухтай, өндөр чанарын гутал',emoji:'👟',fields:{Хэмжээ:'40-45',Өнгө:'Хар/Цагаан',Материал:'Арьс'},oinfo:'',media:''},
-  {id:2,name:'Samsung Galaxy S24',cat:'electronics',status:'ready',pmn:1850000,pusd:545,desc:'Хамгийн сүүлийн үеийн ухаалаг утас',emoji:'📱',fields:{Загвар:'Galaxy S24',Хүчин:'3900mAh',Баталгаа:'1 жил'},oinfo:'',media:''},
-  {id:3,name:'Keychron K2 Pro',cat:'keyboards',status:'preorder',pmn:180000,pusd:53,desc:'RGB механик keyboard',emoji:'⌨️',fields:{Товчлуур:'Gateron Red',Интерфэйс:'BT/USB',Гэрэлтэлт:'RGB'},oinfo:'2 долоо хоногт хүрнэ',media:''},
-  {id:4,name:'Adidas Hoodie',cat:'clothes',status:'ready',pmn:95000,pusd:28,desc:'Зөөлөн, дулаан hoodie',emoji:'🧥',fields:{Хэмжээ:'S-XXL',Өнгө:'Хар',Материал:'Cotton'},oinfo:'',media:''},
-  {id:5,name:'Logitech MX Master 3S',cat:'mouse',status:'ready',pmn:220000,pusd:65,desc:'Мэргэжлийн wireless хулгана',emoji:'🖱️',fields:{DPI:'8000',Интерфэйс:'Bluetooth',Батарей:'70 цаг'},oinfo:'',media:''},
-  {id:6,name:'Sony WH-1000XM5',cat:'electronics',status:'ready',pmn:650000,pusd:192,desc:'Noise cancelling чихэвч',emoji:'🎧',fields:{Загвар:'WH-1000XM5',Хүчин:'30 цаг',Баталгаа:'1 жил'},oinfo:'',media:''},
-  {id:7,name:'Jordan 1 Retro High',cat:'clothes',status:'preorder',pmn:480000,pusd:141,desc:'Nike Jordan 1 оригинал',emoji:'👟',fields:{Хэмжээ:'40-46',Өнгө:'Улаан/Цагаан',Материал:'Арьс'},oinfo:'',media:''},
-  {id:8,name:'Apple Magic Keyboard',cat:'keyboards',status:'ready',pmn:250000,pusd:74,desc:'Нимгэн Mac keyboard',emoji:'⌨️',fields:{Товчлуур:'Scissor',Интерфэйс:'Bluetooth',Гэрэлтэлт:'Үгүй'},oinfo:'',media:''},
-  {id:9,name:'iPad Air M2',cat:'electronics',status:'ready',pmn:2100000,pusd:619,desc:'M2 chip-тэй iPad',emoji:'📲',fields:{Загвар:'iPad Air M2',Хүчин:'28Wh',Баталгаа:'1 жил'},oinfo:'',media:''},
+  {id:1,name:'Nike Air Max 2024',cat:'clothes',status:'ready',pmn:320000,pusd:95,desc:'Тав тухтай, өндөр чанарын гутал',emoji:'👟',fields:{Хэмжээ:'40-45',Өнгө:'Хар/Цагаан',Материал:'Арьс'},oinfo:'',media:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80'},
+  {id:2,name:'Samsung Galaxy S24',cat:'electronics',status:'ready',pmn:1850000,pusd:545,desc:'Хамгийн сүүлийн үеийн ухаалаг утас',emoji:'📱',fields:{Загвар:'Galaxy S24',Хүчин:'3900mAh',Баталгаа:'1 жил'},oinfo:'',media:'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=600&q=80'},
+  {id:3,name:'Keychron K2 Pro',cat:'keyboards',status:'preorder',pmn:180000,pusd:53,desc:'RGB механик keyboard',emoji:'⌨️',fields:{Товчлуур:'Gateron Red',Интерфэйс:'BT/USB',Гэрэлтэлт:'RGB'},oinfo:'2 долоо хоногт хүрнэ',media:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=80'},
+  {id:4,name:'Adidas Hoodie',cat:'clothes',status:'ready',pmn:95000,pusd:28,desc:'Зөөлөн, дулаан hoodie',emoji:'🧥',fields:{Хэмжээ:'S-XXL',Өнгө:'Хар',Материал:'Cotton'},oinfo:'',media:'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80'},
+  {id:5,name:'Logitech MX Master 3S',cat:'mouse',status:'ready',pmn:220000,pusd:65,desc:'Мэргэжлийн wireless хулгана',emoji:'🖱️',fields:{DPI:'8000',Интерфэйс:'Bluetooth',Батарей:'70 цаг'},oinfo:'',media:'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&q=80'},
+  {id:6,name:'Sony WH-1000XM5',cat:'electronics',status:'ready',pmn:650000,pusd:192,desc:'Noise cancelling чихэвч',emoji:'🎧',fields:{Загвар:'WH-1000XM5',Хүчин:'30 цаг',Баталгаа:'1 жил'},oinfo:'',media:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80'},
+  {id:7,name:'Jordan 1 Retro High',cat:'clothes',status:'preorder',pmn:480000,pusd:141,desc:'Nike Jordan 1 оригинал',emoji:'👟',fields:{Хэмжээ:'40-46',Өнгө:'Улаан/Цагаан',Материал:'Арьс'},oinfo:'',media:'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=600&q=80'},
+  {id:8,name:'Apple Magic Keyboard',cat:'keyboards',status:'ready',pmn:250000,pusd:74,desc:'Нимгэн Mac keyboard',emoji:'⌨️',fields:{Товчлуур:'Scissor',Интерфэйс:'Bluetooth',Гэрэлтэлт:'Үгүй'},oinfo:'',media:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=80'},
+  {id:9,name:'iPad Air M2',cat:'electronics',status:'ready',pmn:2100000,pusd:619,desc:'M2 chip-тэй iPad',emoji:'📲',fields:{Загвар:'iPad Air M2',Хүчин:'28Wh',Баталгаа:'1 жил'},oinfo:'',media:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&q=80'},
+  {id:10,name:"Levi's 501 Jeans",cat:'clothes',status:'ready',pmn:145000,pusd:43,desc:'Сонгодог тасгуй оёдолтой жинс',emoji:'👖',fields:{Хэмжээ:'28-36',Өнгө:'Хөх, Хар',Материал:'Denim'},oinfo:'',media:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80'},
+  {id:11,name:'MacBook Air M3',cat:'electronics',status:'ready',pmn:3800000,pusd:1099,desc:'M3 chip-тэй хөнгөн зөөврийн компьютер',emoji:'💻',fields:{Загвар:'MacBook Air 15"',Хүчин:'18 цаг',Баталгаа:'1 жил'},oinfo:'',media:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80'},
+  {id:12,name:'AirPods Pro 2',cat:'electronics',status:'ready',pmn:590000,pusd:179,desc:'Active noise cancellation-тай AirPods',emoji:'🎵',fields:{Загвар:'AirPods Pro 2',Хүчин:'30 цаг',Баталгаа:'1 жил'},oinfo:'',media:'https://images.unsplash.com/photo-1588423771073-b8903fead85b?w=600&q=80'},
 ];
 
 /* ══ BG CANVAS ══ */
@@ -1247,28 +1292,39 @@ function updateCarousel(){
 
 function carouselNext(){
   const track=document.getElementById('product-track');
-  if(carouselIdx<track.children.length-1){carouselIdx++;updateCarousel();}
+  if(!track)return;
+  carouselIdx=(carouselIdx+1)%track.children.length;
+  updateCarousel();
 }
 function carouselPrev(){
-  if(carouselIdx>0){carouselIdx--;updateCarousel();}
+  const track=document.getElementById('product-track');
+  if(!track)return;
+  carouselIdx=(carouselIdx-1+track.children.length)%track.children.length;
+  updateCarousel();
 }
 function goCarousel(i){carouselIdx=i;updateCarousel();}
 
-// Touch/swipe support
+// Touch/swipe
 let swipeX=0;
-document.addEventListener('touchstart',e=>{
-  const stage=document.getElementById('product-stage');
-  if(stage&&stage.contains(e.target))swipeX=e.touches[0].clientX;
-},{passive:true});
+document.addEventListener('touchstart',e=>{swipeX=e.touches[0].clientX;},{passive:true});
 document.addEventListener('touchend',e=>{
-  const stage=document.getElementById('product-stage');
-  if(stage&&stage.contains(e.target)){
-    const dx=swipeX-e.changedTouches[0].clientX;
-    if(Math.abs(dx)>40){dx>0?carouselNext():carouselPrev();}
-  }
+  if(!document.getElementById('page-shop')?.classList.contains('active'))return;
+  const dx=swipeX-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>30){dx>0?carouselNext():carouselPrev();}
+},{passive:true});
+
+// Mouse drag
+let _md=false,_mx=0;
+document.addEventListener('mousedown',e=>{
+  if(document.getElementById('product-stage')?.contains(e.target)){_md=true;_mx=e.clientX;}
+});
+document.addEventListener('mouseup',e=>{
+  if(!_md)return;_md=false;
+  const dx=_mx-e.clientX;
+  if(Math.abs(dx)>35){dx>0?carouselNext():carouselPrev();}
 });
 
-// keyboard arrow support
+// Keyboard
 document.addEventListener('keydown',e=>{
   if(document.querySelector('.page.active')?.id==='page-shop'){
     if(e.key==='ArrowRight')carouselNext();
