@@ -537,7 +537,7 @@ opacity:0;
 .nav-center{display:none;}
 }
 /* ═══ TRUE 3D SPINNER CAROUSEL ═══ */
-.spinner-wrap{width:100%;padding:2rem 0 4rem;display:flex;flex-direction:column;align-items:center;overflow:visible;}
+.spinner-wrap{width:100%;padding:1rem 0 1.5rem;display:flex;flex-direction:column;align-items:center;overflow:visible;}
 .spinner-holder{
 width:170px;height:240px;
 position:relative;
@@ -551,145 +551,90 @@ transform-style:preserve-3d;
 transition:transform 1.0s cubic-bezier(0.25,0.46,0.45,0.94);
 overflow:visible;
 }
+/* ─── CARD FLIP: front=image, back=info ─── */
 .panel{
 position:absolute;
 width:170px;height:240px;
 left:0;top:0;
-border-radius:14px;
-overflow:hidden;cursor:pointer;
-border:1px solid var(–border2);
-background:var(–bg2);
-backface-visibility:hidden;
-transition:border-color .35s,box-shadow .35s,transform .2s;
-box-shadow:0 6px 24px rgba(0,0,0,0.5);
+cursor:pointer;
+transform-style:preserve-3d;
+transition:box-shadow .4s;
 user-select:none;
+/* No border/bg on wrapper itself */
 }
 .panel.is-active{
-border-color:rgba(200,162,84,0.5);
-box-shadow:0 20px 60px rgba(0,0,0,0.75),
-0 0 0 1px rgba(200,162,84,0.2),
-0 0 40px rgba(200,162,84,0.12);
+box-shadow:0 24px 60px rgba(0,0,0,0.7),var(–shadow-gold);
 }
-/* Image fills full card with gradient overlay */
-.panel-img-wrap{
-position:absolute;inset:0;z-index:0;
+
+/* FRONT & BACK share same dimensions */
+.panel-front, .panel-back{
+position:absolute;inset:0;
+border-radius:14px;
+backface-visibility:hidden;
+-webkit-backface-visibility:hidden;
+overflow:hidden;
+transition:transform .6s cubic-bezier(0.34,1.05,0.64,1);
 }
-.panel-img{
-width:100%;height:100%;
-object-fit:cover;display:block;pointer-events:none;
-transition:transform .4s ease;
+
+/* FRONT: image side */
+.panel-front{
+background:var(–bg2);
+border:1px solid var(–border2);
+transform:rotateY(0deg);
+z-index:2;
 }
-.panel.is-active .panel-img{transform:scale(1.04);}
+.panel.is-active .panel-front{
+transform:rotateY(-180deg);
+}
+
+/* BACK: info side */
+.panel-back{
+background:var(–bg2);
+border:1px solid rgba(200,162,84,0.35);
+transform:rotateY(180deg);
+z-index:1;
+display:flex;
+flex-direction:column;
+padding:1rem 0.9rem;
+overflow-y:auto;
+}
+.panel.is-active .panel-back{
+transform:rotateY(0deg);
+z-index:3;
+}
+
+/* Image */
+.panel-img-wrap{position:absolute;inset:0;z-index:0;}
+.panel-img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
 .panel-img-overlay{
 position:absolute;inset:0;
-background:linear-gradient(
-to bottom,
-rgba(0,0,0,0.05) 0%,
-rgba(0,0,0,0.18) 40%,
-rgba(0,0,0,0.88) 100%
-);
+background:linear-gradient(to bottom,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.15) 45%,rgba(0,0,0,0.85) 100%);
 }
-/* Panel text — white by default (dark images), auto-adjust via JS */
-.panel-cat,.panel-name,.panel-meta,.panel-price{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,0.6);}
-.panel-price small{color:rgba(255,255,255,0.55);}
-/* Light image mode — dark text */
+/* light image text */
 .panel.light-img .panel-cat,
-.panel.light-img .panel-name,
-.panel.light-img .panel-price{color:#0a0a0c !important;text-shadow:0 1px 4px rgba(255,255,255,0.4) !important;}
-.panel.light-img .panel-price small{color:rgba(0,0,0,0.5) !important;}
-.panel.light-img .panel-img-overlay{
-background:linear-gradient(
-to bottom,
-rgba(255,255,255,0.02) 0%,
-rgba(255,255,255,0.05) 40%,
-rgba(0,0,0,0.75) 100%
-) !important;
-}
-/* Info overlay text always white regardless */
-.panel-info-name,.panel-info-price,.pi-val{color:#fff !important;}
-.pi-lbl{color:rgba(255,255,255,0.45) !important;}
+.panel.light-img .panel-name{color:#0a0a0c !important;text-shadow:0 1px 3px rgba(255,255,255,0.5) !important;}
+.panel.light-img .panel-img-overlay{background:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,0.0) 35%,rgba(0,0,0,0.78) 100%) !important;}
+
 /* Emoji fallback */
-.panel-emoji{
-width:100%;height:100%;
-display:flex;align-items:center;justify-content:center;
-font-size:4.5rem;background:var(–bg3);
-}
-/* Content sits ON TOP of image */
-.panel-body{
-position:absolute;bottom:0;left:0;right:0;z-index:2;
-padding:0.7rem 0.85rem 0.8rem;
-}
+.panel-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(–bg3);}
 
-/* ── PANEL INFO OVERLAY — slides up INSIDE card ── */
-.panel-info-wrap{
-position:absolute;
-left:0;right:0;bottom:0;
-z-index:4;
-background:linear-gradient(
-transparent 0%,
-rgba(8,8,10,0.92) 28%,
-rgba(8,8,10,0.98) 100%
-);
-border-radius:0 0 14px 14px;
-padding:0 0.85rem 0;
-max-height:0;
-overflow:hidden;
-transition:max-height .5s cubic-bezier(0.34,1.05,0.64,1),
-padding .4s ease;
-pointer-events:none;
-}
-.panel.is-active .panel-info-wrap{
-max-height:200px;
-padding:0 0.85rem 0.85rem;
-pointer-events:all;
-}
-/* name slides up */
-.panel-info-name{
-font-family:‘Cormorant Garamond’,serif;
-font-size:1.05rem;font-weight:300;
-color:#fff;line-height:1.2;
-margin-bottom:0.3rem;
-transform:translateY(12px);opacity:0;
-transition:transform .4s .08s ease,opacity .35s .08s ease;
-}
-.panel.is-active .panel-info-name{transform:translateY(0);opacity:1;}
-/* price */
-.panel-info-price{
-font-family:‘Cormorant Garamond’,serif;
-font-size:1.1rem;color:var(–gold);
-margin-bottom:0.35rem;line-height:1;
-display:flex;align-items:baseline;gap:0.35rem;
-transform:translateY(10px);opacity:0;
-transition:transform .4s .12s ease,opacity .35s .12s ease;
-}
-.panel.is-active .panel-info-price{transform:translateY(0);opacity:1;}
-.panel-info-price span{font-size:0.65rem;color:rgba(255,255,255,0.4);font-family:‘Jost’,sans-serif;}
-/* fields */
-.panel-info-fields{
-margin-bottom:0.45rem;
-transform:translateY(8px);opacity:0;
-transition:transform .4s .16s ease,opacity .35s .16s ease;
-}
-.panel.is-active .panel-info-fields{transform:translateY(0);opacity:1;}
-.pi-row{display:flex;justify-content:space-between;padding:0.18rem 0;font-size:0.62rem;border-bottom:1px solid rgba(255,255,255,0.07);}
-.pi-row:last-child{border-bottom:none;}
-.pi-lbl{color:rgba(255,255,255,0.38);font-family:‘Jost’,sans-serif;}
-.pi-val{color:rgba(255,255,255,0.8);}
-/* buttons */
-.panel-info-btns{
-display:flex;gap:0.35rem;
-transform:translateY(6px);opacity:0;
-transition:transform .4s .2s ease,opacity .35s .2s ease;
-}
-.panel.is-active .panel-info-btns{transform:translateY(0);opacity:1;}
+/* Text on front (bottom of card) */
+.panel-body{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:0.65rem 0.85rem 0.7rem;}
+.panel-status{position:absolute;top:0.5rem;left:0.5rem;z-index:5;font-size:0.5rem;font-weight:600;padding:0.15rem 0.45rem;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase;backdrop-filter:blur(4px);}
+.panel-cat{font-size:0.52rem;color:var(–gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.18rem;opacity:0.9;}
+.panel-name{font-family:‘Cormorant Garamond’,serif;font-size:0.95rem;font-weight:300;color:#fff;line-height:1.2;text-shadow:0 1px 5px rgba(0,0,0,0.7);}
 
-/* panel must allow overflow for info to show */
-.panel{overflow:hidden;}
-.panel-img-wrap{position:absolute;inset:0;z-index:0;}
-.panel-status{z-index:5;}
-
-/* is-active: no corner change needed, info is inside */
-.panel.is-active{border-radius:14px;}
+/* BACK content — slides in from top */
+.pb-cat{font-size:0.52rem;color:var(–gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;opacity:0.85;}
+.pb-name{font-family:‘Cormorant Garamond’,serif;font-size:1rem;font-weight:300;color:var(–text);line-height:1.2;margin-bottom:0.65rem;}
+.pb-price{font-family:‘Cormorant Garamond’,serif;font-size:1.2rem;color:var(–gold);line-height:1;margin-bottom:0.15rem;}
+.pb-price span{font-size:0.65rem;color:var(–text2);font-family:‘Jost’,sans-serif;}
+.pb-fields{margin-bottom:0.7rem;flex:1;}
+.pb-row{display:flex;justify-content:space-between;padding:0.2rem 0;font-size:0.63rem;border-bottom:1px solid var(–border2);}
+.pb-row:last-child{border-bottom:none;}
+.pb-lbl{color:var(–text2);}
+.pb-val{color:var(–text);}
+.pb-btns{display:flex;gap:0.35rem;margin-top:auto;padding-top:0.4rem;}
 
 .panel-cat{font-size:0.54rem;color:var(–gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.2rem;opacity:0.9;}
 .panel-name{font-family:‘Cormorant Garamond’,serif;font-size:1rem;font-weight:300;color:#fff;margin-bottom:0.15rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,0.5);}
@@ -716,8 +661,7 @@ z-index:3;backdrop-filter:blur(4px);
 .vb{background:none;border:1px solid var(–border2);color:var(–text2);width:30px;height:30px;border-radius:5px;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .vb.active{background:var(–gold);color:#000;border-color:var(–gold);}
 /* detail bg blur */
-.detail-bg-blur{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;filter:blur(35px) saturate(0.4) brightness(0.2);transition:opacity .5s;opacity:0;pointer-events:none;}
-.detail-bg-blur.show{opacity:1;}
+.detail-bg-blur{display:none !important;}
 </style>
 
 </head>
@@ -725,55 +669,87 @@ z-index:3;backdrop-filter:blur(4px);
 
 <canvas id="bg-canvas"></canvas>
 
-<div class="detail-bg-blur" id="detail-bg-blur"></div>
-
 <!-- ═══ NAV ═══ -->
 
 <nav>
-  <div class="nav-logo" onclick="showPage('home')">34<sub>store</sub></div>
+  <!-- LEFT: Logo -->
+  <div class="nav-logo" onclick="showPage('home')">34</div>
 
-  <div class="nav-center">
-    <div class="nav-link" onclick="showPage('shop')" id="nl-shop" data-mn="Каталог" data-en="Catalog">Каталог</div>
-    <div class="nav-link" onclick="showPage('track')" id="nl-track" data-mn="Захиалга" data-en="Orders">Захиалга</div>
-    <div class="nav-link" onclick="showPage('contact')" id="nl-contact" data-mn="Холбоо барих" data-en="Contact">Холбоо барих</div>
+  <!-- CENTER: Search bar -->
+
+  <div class="nav-search-wrap">
+    <span class="nav-search-icon">⌕</span>
+    <input id="search-inp" class="nav-search-inp" 
+      placeholder="Бараа хайх..." 
+      oninput="filterSearch(this.value)"
+      onfocus="showPage('shop')"
+      data-mn-ph="Бараа хайх..." data-en-ph="Search products...">
   </div>
 
+  <!-- RIGHT: icons + user -->
+
   <div class="nav-right">
-    <!-- SEARCH -->
-    <button class="nav-icon-btn" onclick="toggleSearch()" title="Search">🔍</button>
-    <!-- CART -->
-    <button class="nav-icon-btn" onclick="toggleCart()" style="position:relative">
-      🛒<div class="cart-badge" id="cart-count" style="position:absolute;top:2px;right:2px">0</div>
+    <!-- notification icon -->
+    <button class="nib" onclick="toggleCart()" style="position:relative" title="Cart">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <div class="cart-dot" id="cart-count" style="position:absolute;top:1px;right:1px">0</div>
     </button>
-    <!-- LANG TOGGLE - always visible -->
-    <div class="nav-toggle-group">
-      <button class="ntog active" id="l-mn" onclick="setLang('mn')">МН</button>
-      <button class="ntog" id="l-en" onclick="setLang('en')">EN</button>
+    <!-- settings icon -->
+    <div style="position:relative" id="settings-wrap2">
+      <button class="nib" onclick="toggleSettings2()" title="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <!-- Settings dropdown -->
+      <div class="nav-settings-dd" id="nav-settings-dd">
+        <div class="nsd-row">
+          <span class="nsd-lbl" data-mn="Загвар" data-en="Theme">Загвар</span>
+          <div class="nav-toggle-group">
+            <button class="ntog active" id="t-dark" onclick="setTheme('dark')">🌙</button>
+            <button class="ntog" id="t-light" onclick="setTheme('light')">☀️</button>
+          </div>
+        </div>
+        <div class="nsd-row">
+          <span class="nsd-lbl" data-mn="Хэл" data-en="Language">Хэл</span>
+          <div class="nav-toggle-group">
+            <button class="ntog active" id="l-mn" onclick="setLang('mn')">МН</button>
+            <button class="ntog" id="l-en" onclick="setLang('en')">EN</button>
+          </div>
+        </div>
+        <div class="nsd-row">
+          <span class="nsd-lbl" data-mn="Админ" data-en="Admin">Админ</span>
+          <button class="ntog" onclick="tryAdmin();document.getElementById('nav-settings-dd').classList.remove('open')">🔑</button>
+        </div>
+      </div>
     </div>
-    <!-- THEME TOGGLE - always visible -->
-    <div class="nav-toggle-group">
-      <button class="ntog active" id="t-dark" onclick="setTheme('dark')">🌙</button>
-      <button class="ntog" id="t-light" onclick="setTheme('light')">☀️</button>
+    <!-- divider -->
+    <div style="width:1px;height:22px;background:rgba(255,255,255,0.1);margin:0 0.1rem"></div>
+    <!-- AUTH / USER -->
+    <div id="auth-wrap">
+      <button class="nav-user-btn" onclick="openM('auth-m')">
+        <div class="nav-user-avatar">?</div>
+        <div class="nav-user-info">
+          <div class="nav-user-name" data-mn="Нэвтрэх" data-en="Login">Нэвтрэх</div>
+          <div class="nav-user-email" data-mn="Бүртгүүлэх" data-en="Register">Бүртгүүлэх</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </div>
-    <!-- ADMIN -->
-    <button class="nav-icon-btn" onclick="tryAdmin()" title="Admin">🔑</button>
-    <!-- AUTH -->
-    <div id="auth-wrap"><button class="nav-btn gold" onclick="openM('auth-m')" data-mn="Нэвтрэх" data-en="Login">Нэвтрэх</button></div>
-    <div id="user-wrap" class="user-wrap" style="display:none">
-      <button class="nav-btn" onclick="toggleUserDd()" id="user-btn">👤 <span id="user-nm">User</span></button>
+    <div id="user-wrap" class="user-wrap" style="display:none;position:relative">
+      <button class="nav-user-btn" onclick="toggleUserDd()">
+        <div class="nav-user-avatar" id="user-av-nav">U</div>
+        <div class="nav-user-info">
+          <div class="nav-user-name" id="user-nm">User</div>
+          <div class="nav-user-email" id="user-email-nav">user@email.com</div>
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
       <div class="user-dd" id="user-dd">
-        <div class="dd-item" onclick="showPage('admin')" data-mn="Админ самбар" data-en="Admin Panel">Админ самбар</div>
-        <div class="dd-item" onclick="doLogout()" data-mn="Гарах" data-en="Logout">Гарах</div>
+        <div class="dd-item" onclick="showPage('admin')" data-mn="Админ самбар" data-en="Admin Panel">⚙️ Админ самбар</div>
+        <div class="dd-item" onclick="doLogout()" data-mn="Гарах" data-en="Logout">🚪 Гарах</div>
       </div>
     </div>
   </div>
 </nav>
-
-<!-- SEARCH BAR -->
-
-<div id="search-bar" style="display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:190;background:var(--bg2);border-bottom:1px solid var(--border);padding:0.8rem 2rem;">
-  <input class="fi" id="search-inp" placeholder="Бараа хайх..." oninput="filterSearch(this.value)" style="max-width:500px;">
-</div>
 
 <!-- ═══ PAGES ═══ -->
 
@@ -801,8 +777,6 @@ z-index:3;backdrop-filter:blur(4px);
 </div>
 
 <!-- DETAIL BG BLUR -->
-
-<div class="detail-bg-blur" id="detail-bg-blur"></div>
 
 <!-- SHOP -->
 
@@ -1276,6 +1250,12 @@ function setTheme(th){
   initStars();initClouds();
 }
 function toggleSettings(){}
+function toggleSettings2(){document.getElementById('nav-settings-dd').classList.toggle('open');}
+// Close settings when clicking outside
+document.addEventListener('click',e=>{
+  const sw=document.getElementById('settings-wrap2');
+  if(sw&&!sw.contains(e.target))document.getElementById('nav-settings-dd').classList.remove('open');
+});
 function t(mn,en){return lang==='mn'?mn:en;}
 
 
@@ -1283,7 +1263,7 @@ function t(mn,en){return lang==='mn'?mn:en;}
 function showPage(p, anim='fade'){
   // Hide detail bg when leaving shop
   if(p!=='shop'){
-    const db=document.getElementById('detail-bg-blur');
+    const db=document.querySelector('.detail-bg-disabled')||{style:{},classList:{add:()=>{},remove:()=>{}}};
     if(db){db.classList.remove('show');db.style.backgroundImage='';}
   }
   if(p==='admin'&&!currentUser?.isAdmin){openM('admin-auth-m');return;}
@@ -1394,7 +1374,7 @@ function openDetail(id){
   document.getElementById('sp-ord-btn').textContent=t('Захиалах','Pre-order');
 
   // BG blur
-  const db=document.getElementById('detail-bg-blur');
+  const db=document.querySelector('.detail-bg-disabled')||{style:{},classList:{add:()=>{},remove:()=>{}}};
   if(selProd.media){db.style.backgroundImage=`url(${selProd.media})`;db.classList.add('show');}
   else db.classList.remove('show');
 
@@ -1404,7 +1384,7 @@ function openDetail(id){
 function closeSlide(){
   document.getElementById('slide-ov').classList.remove('open');
   document.getElementById('slide-panel').classList.remove('open');
-  const db=document.getElementById('detail-bg-blur');
+  const db=document.querySelector('.detail-bg-disabled')||{style:{},classList:{add:()=>{},remove:()=>{}}};
   db.classList.remove('show');
   db.style.backgroundImage='';
 }
@@ -1607,7 +1587,7 @@ function sendContact(){const msg=document.getElementById('c-msg').value;if(!msg)
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){
   document.getElementById(id).classList.remove('open');
-  if(id==='detail-m'){const db=document.getElementById('detail-bg-blur');db.classList.remove('show');}
+  if(id==='detail-m'){const db=document.querySelector('.detail-bg-disabled')||{style:{},classList:{add:()=>{},remove:()=>{}}};db.classList.remove('show');}
 }
 document.querySelectorAll('.mo').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
 
@@ -1654,39 +1634,35 @@ function renderCarousel(prods){
     const cat=cats.find(c=>c.id===p.cat);
     const rot=angleStep*i;
     const isActive=i===carouselIdx;
-    const fieldRows=Object.entries(p.fields||{}).slice(0,3)
-      .map(([k,v])=>`<div class="pi-row"><span class="pi-lbl">${k}</span><span class="pi-val">${v}</span></div>`).join('');
+    const fieldRows=Object.entries(p.fields||{}).slice(0,4)
+      .map(([k,v])=>`<div class="pb-row"><span class="pb-lbl">${k}</span><span class="pb-val">${v}</span></div>`).join('');
 
     html+=`<div class="panel ${isActive?'is-active':''}"
       style="transform:rotateY(${rot}deg) translateZ(${radius}px)"
-      onclick="${isActive?'':'spinToIdx('+i+')'}" >
+      onclick="panelClick(${i},${p.id})">
 
-      <!-- Full-bleed image -->
-      <div class="panel-img-wrap">
-        ${p.media
-          ?`<img class="panel-img" src="${p.media}" onerror="this.parentElement.innerHTML='<div class=panel-emoji>${p.emoji||'📦'}</div>'">`
-          :`<div class="panel-emoji">${p.emoji||'📦'}</div>`}
-        ${p.media?'<div class="panel-img-overlay"></div>':''}
-      </div>
-
-      <!-- Status badge -->
-      <div class="panel-status ${p.status==='ready'?'s-ready':'s-pre'}">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>
-
-      <!-- Category + name always visible at bottom -->
-      <div class="panel-body">
-        <div class="panel-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
-        <div class="panel-name">${p.name}</div>
-      </div>
-
-      <!-- INFO OVERLAY — slides up inside card when active -->
-      <div class="panel-info-wrap">
-        <div class="panel-info-name">${p.name}</div>
-        <div class="panel-info-price">
-          ₮${Number(p.pmn).toLocaleString()}
-          <span>/ $${p.pusd}</span>
+      <!-- FRONT: image -->
+      <div class="panel-front">
+        <div class="panel-img-wrap">
+          ${p.media
+            ?`<img class="panel-img" src="${p.media}" onerror="this.parentElement.innerHTML='<div class=panel-emoji>${p.emoji||'📦'}</div>'">`
+            :`<div class="panel-emoji">${p.emoji||'📦'}</div>`}
+          ${p.media?'<div class="panel-img-overlay"></div>':''}
         </div>
-        <div class="panel-info-fields">${fieldRows}</div>
-        <div class="panel-info-btns" onclick="event.stopPropagation()">
+        <div class="panel-status ${p.status==='ready'?'s-ready':'s-pre'}">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>
+        <div class="panel-body">
+          <div class="panel-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
+          <div class="panel-name">${p.name}</div>
+        </div>
+      </div>
+
+      <!-- BACK: info -->
+      <div class="panel-back">
+        <div class="pb-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
+        <div class="pb-name">${p.name}</div>
+        <div class="pb-price">₮${Number(p.pmn).toLocaleString()} <span>/ $${p.pusd}</span></div>
+        <div class="pb-fields">${fieldRows}</div>
+        <div class="pb-btns" onclick="event.stopPropagation()">
           <button class="pb pb-buy" style="flex:1" onclick="openBuy(${p.id})">${t('Авах','Buy')}</button>
           <button class="pb pb-ord" style="flex:1" onclick="openOrder(${p.id})">${t('Захиалах','Order')}</button>
         </div>
@@ -1706,15 +1682,12 @@ function renderCarousel(prods){
   spinner.innerHTML=html;
   // Use accumulated angle — this prevents reversal
   spinner.style.transform=`rotateY(${spinAngleDeg}deg)`;
-  // Detect image brightness for each panel
+  // Detect image brightness for text color
   spinner.querySelectorAll('.panel').forEach(panel=>{
     const img=panel.querySelector('.panel-img');
     if(!img)return;
-    if(img.complete&&img.naturalWidth>0){
-      detectImgBrightness(img,panel);
-    } else {
-      img.addEventListener('load',()=>detectImgBrightness(img,panel),{once:true});
-    }
+    if(img.complete&&img.naturalWidth>0){detectImgBrightness(img,panel);}
+    else{img.addEventListener('load',()=>detectImgBrightness(img,panel),{once:true});}
   });
 
   dots.innerHTML=Array.from({length:spinTotal},(_,i)=>
@@ -1722,7 +1695,7 @@ function renderCarousel(prods){
   ).join('');
 
   const cp=prods[carouselIdx];
-  const db=document.getElementById('detail-bg-blur');
+  const db=document.querySelector('.detail-bg-disabled')||{style:{},classList:{add:()=>{},remove:()=>{}}};
   if(cp&&cp.media){db.style.backgroundImage=`url(${cp.media})`;db.classList.add('show');}
   else db.classList.remove('show');
 }
@@ -1765,15 +1738,12 @@ function spinToIdx(targetIdx){
 function spinNext(){spinTo(carouselIdx+1);}
 function spinPrev(){spinPrev2();}
 
-function spinClickPanel(panelIdx,prodId,event){
-  // If click came from a button inside, ignore
-  if(event&&(event.target.tagName==='BUTTON'||event.target.closest('button')))return;
-
-  if(panelIdx===carouselIdx){
-    // Center card: open slide-up detail
-    if(prodId)openDetail(prodId);
+function panelClick(panelIdx, prodId){
+  if(panelIdx === carouselIdx){
+    // Center card — flip is handled by CSS is-active
+    // Do nothing extra, info already showing on back
   } else {
-    // Side card: spin to it (always forward)
+    // Side card — spin to it
     spinToIdx(panelIdx);
   }
 }
