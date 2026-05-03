@@ -116,6 +116,10 @@ box-shadow:var(–shadow);z-index:300;
 /* ═══════════════ PAGES ═══════════════ */
 .page{display:none;}
 .page.active{display:block;}
+@keyframes slideUpIn{from{opacity:0;transform:translateY(55px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.anim-slideup{animation:slideUpIn .52s cubic-bezier(0.34,1.05,0.64,1) both;}
+.anim-fade{animation:fadeIn .35s ease both;}
 
 /* ═══════════════ HERO / LANDING ═══════════════ */
 .hero{
@@ -463,7 +467,18 @@ transition:transform .45s .18s cubic-bezier(0.34,1.05,0.64,1), opacity .4s .18s 
 .sp-fields{margin-bottom:0.5rem;}
 .sp-row{display:flex;justify-content:space-between;padding:0.32rem 0;font-size:0.8rem;border-bottom:1px solid var(–border2);}
 .sp-lbl{color:var(–text2);}
-.sp-val{font-weight:400;}
+.sp-val{font-weight:400;color:var(–text);}
+/* Light mode: slide panel always solid bg, text always readable */
+[data-theme=“light”] .slide-panel{background:#faf7f0;}
+[data-theme=“light”] .sp-name{color:#1a1610;}
+[data-theme=“light”] .sp-cat{color:var(–gold);}
+[data-theme=“light”] .sp-desc{color:#7a6e55;}
+[data-theme=“light”] .sp-val{color:#1a1610;}
+[data-theme=“light”] .sp-price{color:var(–gold);}
+[data-theme=“light”] .sp-price span{color:#7a6e55;}
+/* Dark mode: also ensure text readable on dark bg */
+.sp-name{color:var(–text);}
+.sp-cat{color:var(–gold);}
 .sp-price{font-family:‘Cormorant Garamond’,serif;font-size:1.8rem;color:var(–gold);margin:1rem 0 0.3rem;line-height:1;}
 .sp-price span{font-size:1rem;color:var(–text2);font-family:‘Jost’,sans-serif;}
 .sp-btns{display:flex;gap:0.7rem;margin-top:1.1rem;}
@@ -560,11 +575,14 @@ transition:transform .4s ease;
 position:absolute;inset:0;
 background:linear-gradient(
 to bottom,
-rgba(0,0,0,0.08) 0%,
-rgba(0,0,0,0.2) 40%,
-rgba(0,0,0,0.82) 100%
+rgba(0,0,0,0.05) 0%,
+rgba(0,0,0,0.18) 40%,
+rgba(0,0,0,0.88) 100%
 );
 }
+/* Panel text always white (over image gradient) */
+.panel-cat,.panel-name,.panel-meta,.panel-price{color:#fff !important;}
+.panel-price small{color:rgba(255,255,255,0.55) !important;}
 /* Emoji fallback */
 .panel-emoji{
 width:100%;height:100%;
@@ -678,7 +696,7 @@ z-index:3;backdrop-filter:blur(4px);
       <button class="hero-btn hb-filled" onclick="showPage('shop')" data-mn="Бүтээгдэхүүн үзэх" data-en="Browse Products">Бүтээгдэхүүн үзэх</button>
       <button class="hero-btn hb-outline" onclick="openM('auth-m')" data-mn="Захиалга өгөх" data-en="Place Order">Захиалга өгөх</button>
     </div>
-    <div class="hero-scroll" onclick="showPage('shop')" style="touch-action:none">
+    <div class="hero-scroll" onclick="showPage('shop','up')" style="touch-action:none">
       <div class="scroll-line"></div>
       <span data-mn="Дээш шударна уу" data-en="Swipe up">Дээш шударна уу</span>
     </div>
@@ -1147,38 +1165,49 @@ function t(mn,en){return lang==='mn'?mn:en;}
 
 
 /* ══ PAGES ══ */
-function showPage(p){
+function showPage(p, anim='fade'){
   if(p==='admin'&&!currentUser?.isAdmin){openM('admin-auth-m');return;}
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active','anim-slideup','anim-fade'));
   document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
+  const el=document.getElementById('page-'+p);
+  el.classList.add('active');
+  // animation
+  el.classList.add(anim==='up'?'anim-slideup':'anim-fade');
+  setTimeout(()=>el.classList.remove('anim-slideup','anim-fade'),600);
   const nl=document.getElementById('nl-'+p);if(nl)nl.classList.add('active');
   window.scrollTo(0,0);
-  if(p==='shop'){gridPage=1;renderShop();}
+  if(p==='shop'){carouselIdx=0;spinAngleDeg=0;renderShop();}
   if(p==='admin'){renderAdminProds();renderAdminCats();renderAdminOrders();}
   if(p==='track')renderTrack();
-  // close dropdowns
-  document.getElementById('settings-dd')?.classList.remove('open');
-  document.getElementById('user-dd').classList.remove('open');
-  document.getElementById('search-bar').style.display='none';
+  document.getElementById('usr-dd')?.classList.remove('open');
 }
 
 /* ══ SEARCH ══ */
 function toggleSearch(){
   const sb=document.getElementById('search-bar');
-  sb.style.display=sb.style.display==='none'?'block':'none';
-  if(sb.style.display==='block'){document.getElementById('search-inp').focus();showPage('shop');}
+  const isOpen=sb.style.display==='block';
+  sb.style.display=isOpen?'none':'block';
+  if(!isOpen){
+    document.getElementById('search-inp').focus();
+    if(!document.getElementById('page-shop').classList.contains('active'))
+      showPage('shop');
+  } else {
+    document.getElementById('search-inp').value='';
+    renderShop();
+  }
 }
 function filterSearch(q){
   if(!q.trim()){renderShop();return;}
   const r=products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.desc.toLowerCase().includes(q.toLowerCase()));
-  document.getElementById('shop-products').innerHTML=r.map(p=>pcardHTML(p)).join('');
+  carouselIdx=0;spinAngleDeg=0;
+  if(viewMode==='carousel')renderCarousel(r);
+  else document.getElementById('shop-products').innerHTML=r.map(p=>pcardHTML(p)).join('');
 }
 
 /* ══ SHOP ══ */
 function renderShop(){
   const all=[{id:'all',name:t('Бүгд','All'),icon:'🛍️'},...cats];
-  document.getElementById('shop-cat-pills').innerHTML=all.map(c=>`<div class="cat-pill ${currentCat===c.id?'active':''}" onclick="currentCat='${c.id}';carouselIdx=0;gridPage=1;renderShop()">${c.icon} ${c.name}</div>`).join('');
+  document.getElementById('shop-cat-pills').innerHTML=all.map(c=>`<div class="cat-pill ${currentCat===c.id?'active':''}" onclick="currentCat='${c.id}';carouselIdx=0;spinAngleDeg=0;gridPage=1;renderShop()">${c.icon} ${c.name}</div>`).join('');
   const filtered=currentCat==='all'?[...products]:products.filter(p=>p.cat===currentCat);
   if(viewMode==='carousel'){
     renderCarousel(filtered);
@@ -1364,10 +1393,88 @@ function delProduct(id){if(!confirm(t('Устгах уу?','Delete?')))return;pr
 /* ══ ADMIN ══ */
 function swAdminTab(tab,el){document.querySelectorAll('.a-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['products','cats','orders','qpay'].forEach(t=>{const e=document.getElementById('atp-'+t);if(e)e.style.display=t===tab?'block':'none';});if(tab==='cats')renderAdminCats();if(tab==='orders')renderAdminOrders();if(tab==='qpay')renderAdminQpay();}
 function renderAdminProds(){const el=document.getElementById('admin-prod-list');if(!el)return;el.innerHTML=products.map(p=>`<div class="al-item"><div class="al-img">${p.media?`<img src="${p.media}" onerror="this.style.display='none'">`:(p.emoji||'📦')}</div><div class="al-info"><div class="al-name">${p.name}</div><div class="al-meta">₮${Number(p.pmn).toLocaleString()} · $${p.pusd} · ${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div></div><div class="al-btns"><button class="alb" onclick="openEditProduct(${p.id})">${t('Засах','Edit')}</button><button class="alb del" onclick="delProduct(${p.id})">${t('Устгах','Delete')}</button></div></div>`).join('');}
-function renderAdminCats(){const el=document.getElementById('cat-admin-list');if(!el)return;el.innerHTML=cats.map(c=>`<div class="cai"><div class="cai-ic">${c.icon}</div><div class="cai-n">${c.name}</div><div class="cai-f">${c.fields.length} ${t('талбар','fields')}</div><button class="alb del" onclick="delCat('${c.id}')" style="padding:0.2rem 0.4rem;font-size:0.62rem">✕</button></div>`).join('');ncFC=0;document.getElementById('nc-fields').innerHTML='';}
-function addNCField(){ncFC++;document.getElementById('nc-fields').innerHTML+=`<div style="display:flex;gap:0.4rem;margin-bottom:0.35rem"><input class="fi nc-fi" placeholder="${t('Жишээ: Хэмжээ','e.g. Size')}" style="flex:1"><button class="alb del" onclick="this.parentElement.remove()" style="padding:0.22rem 0.4rem">✕</button></div>`;}
-function saveNewCat(){const name=document.getElementById('nc-name').value.trim(),icon=document.getElementById('nc-icon').value.trim()||'📦';if(!name){toast(t('Нэр оруулна уу','Enter name'));return;}const id=name.toLowerCase().replace(/\s+/g,'_')+Date.now(),fields=[...document.querySelectorAll('.nc-fi')].map(i=>i.value.trim()).filter(Boolean);cats.push({id,name,icon,fields});document.getElementById('nc-name').value='';document.getElementById('nc-icon').value='';document.getElementById('nc-fields').innerHTML='';renderAdminCats();toast(t('Ангилал нэмэгдлээ!','Category added!'));}
-function delCat(id){if(!confirm(t('Устгах уу?','Delete?')))return;cats=cats.filter(c=>c.id!==id);renderAdminCats();renderShop();toast(t('Устгагдлаа','Deleted'));}
+function renderAdminCats(){
+  const el=document.getElementById('cat-admin-list');
+  if(!el)return;
+  el.innerHTML=cats.map(c=>`
+    <div class="cai" id="cai-${c.id}">
+      <div class="cai-ic">${c.icon}</div>
+      <div style="flex:1">
+        <div class="cai-n">${c.name}</div>
+        <div class="cai-f">${c.fields.map(f=>`<span style="background:var(--bg3);border-radius:3px;padding:.1rem .4rem;margin-right:.3rem;font-size:.58rem">${f}</span>`).join('')}</div>
+      </div>
+      <button class="alb" onclick="editCatInline('${c.id}')" style="font-size:.62rem">${t('Засах','Edit')}</button>
+      <button class="alb del" onclick="delCat('${c.id}')" style="padding:.2rem .4rem;font-size:.62rem">✕</button>
+    </div>`).join('');
+  ncFC=0;
+  document.getElementById('nc-fields').innerHTML='';
+}
+
+function editCatInline(id){
+  const cat=cats.find(c=>c.id===id);if(!cat)return;
+  const el=document.getElementById('cai-'+id);
+  el.innerHTML=`
+    <div style="width:100%">
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+        <input class="fi" id="edit-icon-${id}" value="${cat.icon}" style="width:60px">
+        <input class="fi" id="edit-name-${id}" value="${cat.name}" style="flex:1">
+      </div>
+      <div id="edit-fields-${id}" style="margin-bottom:.5rem">
+        ${cat.fields.map((f,i)=>`<div style="display:flex;gap:.4rem;margin-bottom:.3rem">
+          <input class="fi edit-cf-${id}" value="${f}" style="flex:1">
+          <button class="alb del" onclick="this.parentElement.remove()" style="padding:.2rem .4rem">✕</button>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        <button class="alb" onclick="addEditField('${id}')" style="font-size:.62rem">+ ${t('Талбар','Field')}</button>
+        <button class="btn-g" onclick="saveEditCat('${id}')" style="padding:.3rem .8rem;font-size:.65rem">${t('Хадгалах','Save')}</button>
+        <button class="alb" onclick="renderAdminCats()" style="font-size:.62rem">${t('Болих','Cancel')}</button>
+      </div>
+    </div>`;
+}
+function addEditField(id){
+  const el=document.getElementById('edit-fields-'+id);
+  el.innerHTML+=`<div style="display:flex;gap:.4rem;margin-bottom:.3rem">
+    <input class="fi edit-cf-${id}" placeholder="${t('Талбарын нэр','Field name')}" style="flex:1">
+    <button class="alb del" onclick="this.parentElement.remove()" style="padding:.2rem .4rem">✕</button>
+  </div>`;
+}
+function saveEditCat(id){
+  const cat=cats.find(c=>c.id===id);if(!cat)return;
+  const name=document.getElementById('edit-name-'+id)?.value.trim();
+  const icon=document.getElementById('edit-icon-'+id)?.value.trim()||'📦';
+  if(!name){toast(t('Нэр оруулна уу','Enter name'));return;}
+  const fields=[...document.querySelectorAll('.edit-cf-'+id)].map(i=>i.value.trim()).filter(Boolean);
+  cat.name=name;cat.icon=icon;cat.fields=fields;
+  renderAdminCats();renderShop();
+  toast(t('Ангилал шинэчлэгдлээ!','Category updated!'));
+}
+function addNCField(){
+  ncFC++;
+  document.getElementById('nc-fields').innerHTML+=`<div style="display:flex;gap:.4rem;margin-bottom:.35rem">
+    <input class="fi nc-fi" placeholder="${t('Жишээ: Хэмжээ','e.g. Size')}" style="flex:1">
+    <button class="alb del" onclick="this.parentElement.remove()" style="padding:.22rem .4rem">✕</button>
+  </div>`;
+}
+function saveNewCat(){
+  const name=document.getElementById('nc-name').value.trim();
+  const icon=document.getElementById('nc-icon').value.trim()||'📦';
+  if(!name){toast(t('Нэр оруулна уу','Enter name'));return;}
+  const id=name.toLowerCase().replace(/\s+/g,'_')+Date.now();
+  const fields=[...document.querySelectorAll('.nc-fi')].map(i=>i.value.trim()).filter(Boolean);
+  cats.push({id,name,icon,fields});
+  document.getElementById('nc-name').value='';
+  document.getElementById('nc-icon').value='';
+  document.getElementById('nc-fields').innerHTML='';
+  renderAdminCats();renderShop();
+  toast(t('Ангилал нэмэгдлээ!','Category added!'));
+}
+function delCat(id){
+  if(!confirm(t('Устгах уу?','Delete?')))return;
+  cats=cats.filter(c=>c.id!==id);
+  renderAdminCats();renderShop();
+  toast(t('Устгагдлаа','Deleted'));
+}
 function renderAdminOrders(){const el=document.getElementById('admin-order-list');if(!el)return;if(!orders.length){el.innerHTML=`<div style="color:var(--text3);padding:1.5rem 0;font-size:0.8rem;letter-spacing:0.1em">${t('Захиалга байхгүй байна.','No orders yet.')}</div>`;return;}el.innerHTML=orders.map(o=>`<div class="al-item"><div class="al-info"><div class="al-name">${o.product} <span style="font-size:0.6rem;color:var(--gold);letter-spacing:0.08em">${o.id}</span></div><div class="al-meta">₮${Number(o.pmn).toLocaleString()} · ${o.type} · ${o.date} · ${o.addr||''}</div></div><button class="alb" onclick="progOrd('${o.id}')" style="font-size:0.68rem;letter-spacing:0.06em">${t('Дараагийн шат','Next Step')}</button></div>`).join('');}
 function progOrd(id){const o=orders.find(x=>x.id===id);if(!o)return;const nx=o.steps.findIndex(s=>!s.done);if(nx===-1){toast(t('Бүх шат дууссан','All done'));return;}o.steps[nx].done=true;o.steps[nx].time=new Date().toLocaleTimeString();renderAdminOrders();toast(t('Шинэчлэгдлээ!','Updated!'));}
 function renderAdminQpay(){document.getElementById('qp-acc').value=qpS.account||'';document.getElementById('qp-nm-inp').value=qpS.name||'';document.getElementById('qpay-admin-banks').innerHTML=BANKS.map(b=>`<div class="bank-btn ${qpS.bank===b.n?'sel':''}" onclick="qpS.bank='${b.n}';this.parentElement.querySelectorAll('.bank-btn').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')"><div class="bk-i">${b.i}</div><div class="bk-n">${b.n}</div></div>`).join('');}
@@ -1401,6 +1508,7 @@ function setView(v){
 /* ══ TRUE CSS SPINNER CAROUSEL ══ */
 let spinAngle=0;
 let spinTotal=0;
+let spinAngleDeg=0; // accumulated total angle — never resets, always increases/decreases
 
 function renderCarousel(prods){
   const spinner=document.getElementById('spinner');
@@ -1410,11 +1518,8 @@ function renderCarousel(prods){
     dots.innerHTML='';return;
   }
 
-  // how many panels to show (max 8 for clean look)
   const showCount=Math.min(prods.length+(currentUser?.isAdmin?1:0), 8);
   const angleStep=360/showCount;
-  // radius based on count
-  // Correct 3D circle radius: half-width / tan(half-angle)
   const panelW=220;
   const radius=Math.round((panelW/2)/Math.tan(Math.PI/showCount))+20;
 
@@ -1430,16 +1535,13 @@ function renderCarousel(prods){
     html+=`<div class="panel ${isActive?'is-active':''}"
       style="transform:rotateY(${rot}deg) translateZ(${radius}px)"
       onclick="spinClickPanel(${i},${p.id})">
-      <!-- Full bleed image or emoji -->
       <div class="panel-img-wrap">
         ${p.media
           ?`<img class="panel-img" src="${p.media}" onerror="this.parentElement.innerHTML='<div class=panel-emoji>${p.emoji||'📦'}</div>'">`
           :`<div class="panel-emoji">${p.emoji||'📦'}</div>`}
         ${p.media?'<div class="panel-img-overlay"></div>':''}
       </div>
-      <!-- Status badge -->
       <div class="panel-status ${p.status==='ready'?'s-ready':'s-pre'}">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>
-      <!-- Text content floats over image -->
       <div class="panel-body">
         <div class="panel-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
         <div class="panel-name">${p.name}</div>
@@ -1455,25 +1557,22 @@ function renderCarousel(prods){
     </div>`;
   });
 
-  // admin add panel
   if(currentUser?.isAdmin){
     const i=showCount-1;
-    const rot=angleStep*i;
-    html+=`<div class="panel" style="transform:rotateY(${rot}deg) translateZ(${radius}px);border:1px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);" onclick="openAddProduct()">
+    html+=`<div class="panel" style="transform:rotateY(${angleStep*i}deg) translateZ(${radius}px);border:1px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);" onclick="openAddProduct()">
       <div style="font-size:2rem;margin-bottom:0.5rem">＋</div>
       <div style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;font-family:'Jost',sans-serif">${t('Бараа нэмэх','Add Product')}</div>
     </div>`;
   }
 
   spinner.innerHTML=html;
-  spinner.style.transform=`rotateY(${-angleStep*carouselIdx}deg)`;
+  // Use accumulated angle — this prevents reversal
+  spinner.style.transform=`rotateY(${spinAngleDeg}deg)`;
 
-  // dots
   dots.innerHTML=Array.from({length:spinTotal},(_,i)=>
-    `<div class="cdot ${i===carouselIdx?'active':''}" onclick="spinTo(${i})"></div>`
+    `<div class="cdot ${i===carouselIdx?'active':''}" onclick="spinToIdx(${i})"></div>`
   ).join('');
 
-  // update bg blur
   const cp=prods[carouselIdx];
   const db=document.getElementById('detail-bg-blur');
   if(cp&&cp.media){db.style.backgroundImage=`url(${cp.media})`;db.classList.add('show');}
@@ -1481,21 +1580,42 @@ function renderCarousel(prods){
 }
 
 function spinTo(i){
-  carouselIdx=((i%spinTotal)+spinTotal)%spinTotal;
   const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
-  const showCount=Math.min(filtered.length+(currentUser?.isAdmin?1:0),8);
-  const angleStep=360/showCount;
-  const spinner=document.getElementById('spinner');
-  spinner.style.transform=`rotateY(${-angleStep*carouselIdx}deg)`;
-  // update dots
-  document.querySelectorAll('.snav-dots .cdot').forEach((d,j)=>d.classList.toggle('active',j===carouselIdx));
-  // update active panel highlight + show buttons
-  const filtered2=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
-  renderCarousel(filtered2);
+  const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),16);
+  if(total===0)return;
+  const angleStep=360/total;
+  // Calculate shortest path delta — always go forward (negative = clockwise)
+  spinAngleDeg-=angleStep;
+  carouselIdx=((carouselIdx+1)%total);
+  renderCarousel(filtered);
+}
+
+function spinPrev2(){
+  const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+  const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),16);
+  if(total===0)return;
+  const angleStep=360/total;
+  spinAngleDeg+=angleStep;
+  carouselIdx=((carouselIdx-1+total)%total);
+  renderCarousel(filtered);
+}
+
+// Jump to specific index (from dot click)
+function spinToIdx(targetIdx){
+  const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+  const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),16);
+  if(total===0)return;
+  const angleStep=360/total;
+  // Calculate steps forward (always go forward/clockwise)
+  let steps=targetIdx-carouselIdx;
+  if(steps<0)steps+=total; // wrap forward
+  spinAngleDeg-=angleStep*steps;
+  carouselIdx=targetIdx;
+  renderCarousel(filtered);
 }
 
 function spinNext(){spinTo(carouselIdx+1);}
-function spinPrev(){spinTo(carouselIdx-1);}
+function spinPrev(){spinPrev2();}
 
 function spinClickPanel(panelIdx,prodId){
   if(panelIdx===carouselIdx){if(prodId)openDetail(prodId);}
@@ -1518,7 +1638,7 @@ document.addEventListener('touchend',e=>{
 
   // Home page: swipe UP (dy > 0) to go to shop
   if(document.getElementById('page-home').classList.contains('active')){
-    if(dy > 70 && absDy > absDx*1.5){showPage('shop');return;}
+    if(dy > 70 && absDy > absDx*1.5){showPage('shop','up');return;}
   }
 
   // Shop spinner: swipe LEFT/RIGHT
