@@ -409,6 +409,65 @@ box-shadow:-20px 0 60px rgba(0,0,0,0.6);
 .w100{width:100%;}
 .mt8{margin-top:0.5rem;}
 
+/* ── SLIDE-UP DETAIL PANEL ── */
+.slide-overlay{position:fixed;inset:0;z-index:540;background:rgba(0,0,0,0);pointer-events:none;transition:background .35s;}
+.slide-overlay.open{background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);pointer-events:all;}
+.slide-panel{
+position:fixed;left:0;right:0;bottom:0;z-index:550;
+background:var(–bg2);
+border-top:1px solid var(–border);
+border-radius:24px 24px 0 0;
+max-height:88vh;overflow-y:auto;
+transform:translateY(100%);
+transition:transform .48s cubic-bezier(0.34,1.05,0.64,1);
+box-shadow:0 -12px 50px rgba(0,0,0,0.6), 0 -1px 0 rgba(200,162,84,0.15);
+}
+.slide-panel.open{transform:translateY(0);}
+.sp-handle{width:40px;height:4px;background:var(–border);border-radius:2px;margin:0.75rem auto 0;cursor:grab;}
+/* Hero image area */
+.sp-hero{position:relative;overflow:hidden;height:260px;}
+.sp-img{width:100%;height:100%;object-fit:cover;display:block;
+transform:scale(1.08);opacity:0;
+transition:transform .6s .05s cubic-bezier(0.25,0.46,0.45,0.94), opacity .45s .05s ease;}
+.slide-panel.open .sp-img{transform:scale(1);opacity:1;}
+.sp-img-emoji{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:5.5rem;background:var(–bg3);}
+.sp-hero-grad{
+position:absolute;bottom:0;left:0;right:0;height:60%;
+background:linear-gradient(transparent,var(–bg2));
+}
+/* Name slides DOWN from top */
+.sp-name-wrap{overflow:hidden;padding:0 1.5rem;}
+.sp-name{
+font-family:‘Cormorant Garamond’,serif;font-size:1.6rem;font-weight:300;
+padding:1rem 0 0;line-height:1.15;
+transform:translateY(-40px);opacity:0;
+transition:transform .45s .1s cubic-bezier(0.34,1.15,0.64,1), opacity .4s .1s ease;
+}
+.slide-panel.open .sp-name{transform:translateY(0);opacity:1;}
+/* Category tag */
+.sp-cat-wrap{overflow:hidden;padding:0.4rem 1.5rem 0;}
+.sp-cat{
+font-size:0.58rem;color:var(–gold);letter-spacing:0.14em;text-transform:uppercase;opacity:0.9;
+transform:translateY(-20px);opacity:0;
+transition:transform .4s .15s ease, opacity .35s .15s ease;
+}
+.slide-panel.open .sp-cat{transform:translateY(0);opacity:0.9;}
+/* Body content slides UP */
+.sp-body{
+padding:0.9rem 1.5rem 3rem;
+transform:translateY(35px);opacity:0;
+transition:transform .45s .18s cubic-bezier(0.34,1.05,0.64,1), opacity .4s .18s ease;
+}
+.slide-panel.open .sp-body{transform:translateY(0);opacity:1;}
+.sp-desc{font-size:0.82rem;color:var(–text2);line-height:1.7;margin-bottom:1.1rem;}
+.sp-fields{margin-bottom:0.5rem;}
+.sp-row{display:flex;justify-content:space-between;padding:0.32rem 0;font-size:0.8rem;border-bottom:1px solid var(–border2);}
+.sp-lbl{color:var(–text2);}
+.sp-val{font-weight:400;}
+.sp-price{font-family:‘Cormorant Garamond’,serif;font-size:1.8rem;color:var(–gold);margin:1rem 0 0.3rem;line-height:1;}
+.sp-price span{font-size:1rem;color:var(–text2);font-family:‘Jost’,sans-serif;}
+.sp-btns{display:flex;gap:0.7rem;margin-top:1.1rem;}
+
 .toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(–gold);color:#000;padding:0.6rem 1.6rem;border-radius:2px;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;z-index:999;pointer-events:none;transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(200,162,84,0.4);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
@@ -455,11 +514,12 @@ opacity:0;
 .nav-center{display:none;}
 }
 /* ═══ TRUE 3D SPINNER CAROUSEL ═══ */
-.spinner-wrap{width:100%;padding:2rem 0 4rem;position:relative;overflow:hidden;}
+.spinner-wrap{width:100%;padding:3rem 0 4rem;position:relative;overflow:visible;}
 .spinner-holder{
 width:220px;height:300px;
 position:relative;margin:0 auto;
-perspective:900px;
+perspective:1000px;
+transform-style:preserve-3d;
 }
 .spinner{
 width:100%;height:100%;
@@ -476,29 +536,58 @@ overflow:hidden;cursor:pointer;
 border:1px solid var(–border2);
 background:var(–bg2);
 backface-visibility:hidden;
-transition:border-color .3s,box-shadow .3s;
+transition:border-color .35s,box-shadow .35s,transform .2s;
 box-shadow:0 6px 24px rgba(0,0,0,0.5);
 user-select:none;
 }
 .panel.is-active{
-border-color:rgba(200,162,84,0.45);
-box-shadow:0 16px 60px rgba(0,0,0,0.7),var(–shadow-gold);
+border-color:rgba(200,162,84,0.5);
+box-shadow:0 20px 60px rgba(0,0,0,0.75),
+0 0 0 1px rgba(200,162,84,0.2),
+0 0 40px rgba(200,162,84,0.12);
 }
-.panel-img{width:100%;height:155px;object-fit:cover;display:block;pointer-events:none;}
-.panel-emoji{width:100%;height:155px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(–bg3);}
-.panel-body{padding:0.75rem 0.85rem 0.8rem;}
-.panel-cat{font-size:0.56rem;color:var(–gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.2rem;opacity:0.85;}
-.panel-name{font-family:‘Cormorant Garamond’,serif;font-size:0.9rem;font-weight:300;color:var(–text);margin-bottom:0.15rem;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.panel-meta{font-size:0.65rem;color:var(–text2);margin-bottom:0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Image fills full card with gradient overlay */
+.panel-img-wrap{
+position:absolute;inset:0;z-index:0;
+}
+.panel-img{
+width:100%;height:100%;
+object-fit:cover;display:block;pointer-events:none;
+transition:transform .4s ease;
+}
+.panel.is-active .panel-img{transform:scale(1.04);}
+.panel-img-overlay{
+position:absolute;inset:0;
+background:linear-gradient(
+to bottom,
+rgba(0,0,0,0.08) 0%,
+rgba(0,0,0,0.2) 40%,
+rgba(0,0,0,0.82) 100%
+);
+}
+/* Emoji fallback */
+.panel-emoji{
+width:100%;height:100%;
+display:flex;align-items:center;justify-content:center;
+font-size:4.5rem;background:var(–bg3);
+}
+/* Content sits ON TOP of image */
+.panel-body{
+position:absolute;bottom:0;left:0;right:0;z-index:2;
+padding:0.8rem 0.9rem 0.9rem;
+}
+.panel-cat{font-size:0.54rem;color:var(–gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.2rem;opacity:0.9;}
+.panel-name{font-family:‘Cormorant Garamond’,serif;font-size:1rem;font-weight:300;color:#fff;margin-bottom:0.15rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,0.5);}
+.panel-meta{font-size:0.62rem;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .panel-footer{display:flex;align-items:center;justify-content:space-between;gap:0.4rem;}
 .panel-price{font-family:‘Cormorant Garamond’,serif;color:var(–gold);font-size:1rem;line-height:1;}
-.panel-price small{font-size:0.58rem;color:var(–text2);font-family:‘Jost’,sans-serif;display:block;}
+.panel-price small{font-size:0.56rem;color:rgba(255,255,255,0.5);font-family:‘Jost’,sans-serif;display:block;}
 .panel-btns{display:flex;gap:0.3rem;}
 .panel-status{
 position:absolute;top:0.55rem;left:0.55rem;
-font-size:0.54rem;font-weight:600;padding:0.18rem 0.5rem;
+font-size:0.52rem;font-weight:600;padding:0.18rem 0.5rem;
 border-radius:3px;letter-spacing:0.06em;text-transform:uppercase;
-z-index:2;
+z-index:3;backdrop-filter:blur(4px);
 }
 /* spinner navigation */
 .spinner-nav{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:0.8rem;}
@@ -589,9 +678,9 @@ z-index:2;
       <button class="hero-btn hb-filled" onclick="showPage('shop')" data-mn="Бүтээгдэхүүн үзэх" data-en="Browse Products">Бүтээгдэхүүн үзэх</button>
       <button class="hero-btn hb-outline" onclick="openM('auth-m')" data-mn="Захиалга өгөх" data-en="Place Order">Захиалга өгөх</button>
     </div>
-    <div class="hero-scroll" onclick="showPage('shop')">
+    <div class="hero-scroll" onclick="showPage('shop')" style="touch-action:none">
       <div class="scroll-line"></div>
-      <span data-mn="Доош" data-en="Scroll">Доош</span>
+      <span data-mn="Дээш шударна уу" data-en="Swipe up">Дээш шударна уу</span>
     </div>
   </div>
 </div>
@@ -614,7 +703,7 @@ z-index:2;
     <div class="cat-pills" id="shop-cat-pills"></div>
     <!-- SPINNER 3D CAROUSEL -->
     <div id="view-carousel">
-      <div class="spinner-wrap">
+      <div class="spinner-wrap" style="width:100vw;margin-left:calc(-50vw + 50%);padding:3rem 0 4rem;">
         <div class="spinner-holder">
           <div class="spinner" id="spinner" style="--ang:0"></div>
         </div>
@@ -868,6 +957,32 @@ z-index:2;
   </div>
 </div>
 
+<!-- SLIDE-UP DETAIL PANEL -->
+
+<div class="slide-overlay" id="slide-ov" onclick="closeSlide()"></div>
+<div class="slide-panel" id="slide-panel">
+  <div class="sp-handle" onclick="closeSlide()"></div>
+  <!-- Hero image animates in -->
+  <div class="sp-hero" id="sp-hero">
+    <div id="sp-img-wrap"></div>
+    <div class="sp-hero-grad"></div>
+  </div>
+  <!-- Name slides down -->
+  <div class="sp-name-wrap"><div class="sp-name" id="sp-name"></div></div>
+  <!-- Cat tag slides down -->
+  <div class="sp-cat-wrap"><div class="sp-cat" id="sp-cat"></div></div>
+  <!-- Body slides up -->
+  <div class="sp-body">
+    <div class="sp-desc" id="sp-desc"></div>
+    <div class="sp-fields" id="sp-fields"></div>
+    <div class="sp-price" id="sp-price"></div>
+    <div class="sp-btns">
+      <button class="btn-p w100" id="sp-buy-btn" style="padding:.82rem" onclick="slideOpenBuy()"></button>
+      <button class="btn-s w100" id="sp-ord-btn" style="padding:.82rem" onclick="slideOpenOrder()"></button>
+    </div>
+  </div>
+</div>
+
 <!-- CART -->
 
 <div class="cart-ov" id="cart-ov" onclick="closeCartOut(event)">
@@ -1105,30 +1220,46 @@ function pcardHTML(p){
 function openDetail(id){
   selProd=products.find(p=>p.id===id);if(!selProd)return;
   const cat=cats.find(c=>c.id===selProd.cat);
-  // set bg blur
+
+  // Hero image - zoom in animation
+  document.getElementById('sp-img-wrap').innerHTML=selProd.media
+    ?`<img class="sp-img" src="${selProd.media}" onerror="this.parentElement.innerHTML='<div class=sp-img-emoji>${selProd.emoji||'📦'}</div>'">`
+    :`<div class="sp-img-emoji">${selProd.emoji||'📦'}</div>`;
+
+  // Name slides down from top
+  document.getElementById('sp-name').textContent=selProd.name;
+  // Cat tag slides down
+  document.getElementById('sp-cat').textContent=cat?cat.icon+' '+cat.name:selProd.cat;
+  // Description
+  document.getElementById('sp-desc').textContent=selProd.desc||'';
+  // Fields table
+  document.getElementById('sp-fields').innerHTML=
+    [['Статус', selProd.status==='ready'?'✅ '+t('Бэлэн','Ready'):'🟠 '+t('Захиалгаар','Pre-order')],
+     ...Object.entries(selProd.fields||{}),
+     ...(selProd.oinfo?[[t('Мэдээлэл','Info'),selProd.oinfo]]:[])
+    ].map(([k,v])=>`<div class="sp-row"><span class="sp-lbl">${k}</span><span class="sp-val">${v}</span></div>`).join('');
+  // Big price
+  document.getElementById('sp-price').innerHTML=
+    `₮${Number(selProd.pmn).toLocaleString()} <span>/ $${selProd.pusd}</span>`;
+  document.getElementById('sp-buy-btn').textContent=t('Авах','Buy Now');
+  document.getElementById('sp-ord-btn').textContent=t('Захиалах','Pre-order');
+
+  // BG blur
   const db=document.getElementById('detail-bg-blur');
   if(selProd.media){db.style.backgroundImage=`url(${selProd.media})`;db.classList.add('show');}
   else db.classList.remove('show');
-  document.getElementById('detail-title').textContent=selProd.name;
-  document.getElementById('detail-body').innerHTML=`
-    <div style="aspect-ratio:16/9;background:var(--bg3);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:5rem;margin-bottom:1rem;position:relative;">
-      ${selProd.media?`<img src="${selProd.media}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`:''}
-      ${!selProd.media?selProd.emoji||'📦':''}
-    </div>
-    <div style="font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:0.35rem">${cat?cat.icon+' '+cat.name:selProd.cat}</div>
-    <div style="font-size:0.82rem;color:var(--text2);margin-bottom:0.9rem;line-height:1.6">${selProd.desc||''}</div>
-    <div class="df">
-      <div class="dfr"><span class="dfl">${t('Үнэ','Price')}</span><span class="dfv" style="color:var(--gold)">₮${Number(selProd.pmn).toLocaleString()} / $${selProd.pusd}</span></div>
-      <div class="dfr"><span class="dfl">${t('Статус','Status')}</span><span class="dfv">${selProd.status==='ready'?'✅ '+t('Бэлэн','Ready'):'🟠 '+t('Захиалгаар','Pre-order')}</span></div>
-      ${Object.entries(selProd.fields||{}).map(([k,v])=>`<div class="dfr"><span class="dfl">${k}</span><span class="dfv">${v}</span></div>`).join('')}
-      ${selProd.oinfo?`<div class="dfr"><span class="dfl">${t('Мэдээлэл','Info')}</span><span class="dfv">${selProd.oinfo}</span></div>`:''}
-    </div>
-    <div style="display:flex;gap:0.6rem">
-      <button class="btn-p" style="flex:1" onclick="closeM('detail-m');openBuy(${selProd.id})">${t('Авах','Buy Now')}</button>
-      <button class="btn-s" style="flex:1" onclick="closeM('detail-m');openOrder(${selProd.id})">${t('Захиалах','Pre-order')}</button>
-    </div>`;
-  openM('detail-m');
+
+  document.getElementById('slide-ov').classList.add('open');
+  document.getElementById('slide-panel').classList.add('open');
 }
+function closeSlide(){
+  document.getElementById('slide-ov').classList.remove('open');
+  document.getElementById('slide-panel').classList.remove('open');
+  document.getElementById('detail-bg-blur').classList.remove('show');
+}
+function slideOpenBuy(){closeSlide();if(selProd)openBuy(selProd.id);}
+function slideOpenOrder(){closeSlide();if(selProd)openOrder(selProd.id);}
+
 
 /* ══ BUY/ORDER ══ */
 function pInfoHTML(p){return `<div class="dfr"><span class="dfl">${t('Бараа','Product')}</span><span class="dfv">${p.name}</span></div><div class="dfr"><span class="dfl">${t('Үнэ','Price')}</span><span class="dfv" style="color:var(--gold)">₮${Number(p.pmn).toLocaleString()} / $${p.pusd}</span></div>`;}
@@ -1283,7 +1414,9 @@ function renderCarousel(prods){
   const showCount=Math.min(prods.length+(currentUser?.isAdmin?1:0), 8);
   const angleStep=360/showCount;
   // radius based on count
-  const radius=Math.round(220/Math.tan(Math.PI/showCount));
+  // Correct 3D circle radius: half-width / tan(half-angle)
+  const panelW=220;
+  const radius=Math.round((panelW/2)/Math.tan(Math.PI/showCount))+20;
 
   spinTotal=showCount;
   if(carouselIdx>=spinTotal)carouselIdx=0;
@@ -1293,18 +1426,27 @@ function renderCarousel(prods){
   prods.slice(0,showCount-(currentUser?.isAdmin?1:0)).forEach((p,i)=>{
     const cat=cats.find(c=>c.id===p.cat);
     const rot=angleStep*i;
-    html+=`<div class="panel ${i===carouselIdx?'is-active':''}"
+    const isActive=i===carouselIdx;
+    html+=`<div class="panel ${isActive?'is-active':''}"
       style="transform:rotateY(${rot}deg) translateZ(${radius}px)"
       onclick="spinClickPanel(${i},${p.id})">
+      <!-- Full bleed image or emoji -->
+      <div class="panel-img-wrap">
+        ${p.media
+          ?`<img class="panel-img" src="${p.media}" onerror="this.parentElement.innerHTML='<div class=panel-emoji>${p.emoji||'📦'}</div>'">`
+          :`<div class="panel-emoji">${p.emoji||'📦'}</div>`}
+        ${p.media?'<div class="panel-img-overlay"></div>':''}
+      </div>
+      <!-- Status badge -->
       <div class="panel-status ${p.status==='ready'?'s-ready':'s-pre'}">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>
-      ${p.media?`<img class="panel-img" src="${p.media}" onerror="this.style.display='none'">`:`<div class="panel-emoji">${p.emoji||'📦'}</div>`}
+      <!-- Text content floats over image -->
       <div class="panel-body">
         <div class="panel-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
         <div class="panel-name">${p.name}</div>
         <div class="panel-meta">${Object.entries(p.fields||{}).slice(0,2).map(([k,v])=>`${k}: ${v}`).join(' · ')}</div>
         <div class="panel-footer">
           <div class="panel-price">₮${Number(p.pmn).toLocaleString()}<small>$${p.pusd}</small></div>
-          ${i===carouselIdx?`<div class="panel-btns" onclick="event.stopPropagation()">
+          ${isActive?`<div class="panel-btns" onclick="event.stopPropagation()">
             <button class="pb pb-buy" onclick="openBuy(${p.id})">${t('Авах','Buy')}</button>
             <button class="pb pb-ord" onclick="openOrder(${p.id})">${t('Захиалах','Order')}</button>
           </div>`:''}
@@ -1356,18 +1498,32 @@ function spinNext(){spinTo(carouselIdx+1);}
 function spinPrev(){spinTo(carouselIdx-1);}
 
 function spinClickPanel(panelIdx,prodId){
-  if(panelIdx===carouselIdx){openDetail(prodId);}
+  if(panelIdx===carouselIdx){if(prodId)openDetail(prodId);}
   else{spinTo(panelIdx);}
 }
 
-// Touch/swipe
+// ── UNIFIED SWIPE/TOUCH HANDLER ──
 let _sx=0,_sy=0,_md2=false,_mx2=0;
 document.addEventListener('touchstart',e=>{_sx=e.touches[0].clientX;_sy=e.touches[0].clientY;},{passive:true});
 document.addEventListener('touchend',e=>{
-  if(document.getElementById('page-shop')?.classList.contains('active')){
-    const dx=_sx-e.changedTouches[0].clientX;
-    const dy=Math.abs(_sy-e.changedTouches[0].clientY);
-    if(Math.abs(dx)>30&&dy<60){dx>0?spinNext():spinPrev();}
+  const ex=e.changedTouches[0].clientX,ey=e.changedTouches[0].clientY;
+  const dx=_sx-ex, dy=_sy-ey;
+  const absDx=Math.abs(dx),absDy=Math.abs(dy);
+
+  // Slide panel open: swipe DOWN (dy < 0, so _sy-ey < -80) to close
+  if(document.getElementById('slide-panel').classList.contains('open')){
+    if(dy < -80 && absDy > absDx){closeSlide();return;}
+    return; // don't process other swipes while panel open
+  }
+
+  // Home page: swipe UP (dy > 0) to go to shop
+  if(document.getElementById('page-home').classList.contains('active')){
+    if(dy > 70 && absDy > absDx*1.5){showPage('shop');return;}
+  }
+
+  // Shop spinner: swipe LEFT/RIGHT
+  if(document.getElementById('page-shop')?.classList.contains('active')&&viewMode==='carousel'){
+    if(absDx > 30 && absDx > absDy){dx>0?spinNext():spinPrev();}
   }
 },{passive:true});
 document.addEventListener('mousedown',e=>{
@@ -1380,9 +1536,9 @@ document.addEventListener('mouseup',e=>{
 });
 document.addEventListener('keydown',e=>{
   if(document.getElementById('page-shop')?.classList.contains('active')){
-    if(e.key==='ArrowRight')spinNext();
-    if(e.key==='ArrowLeft')spinPrev();
+    if(e.key==='ArrowRight')spinNext();if(e.key==='ArrowLeft')spinPrev();
   }
+  if(e.key==='Escape')closeSlide();
 });
 
 window.addEventListener('load',()=>{startBg();renderShop();updCartUI();});
