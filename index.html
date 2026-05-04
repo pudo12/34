@@ -38,10 +38,9 @@ body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-w
 nav{
 position:fixed;top:0;left:0;right:0;z-index:500;
 height:var(–nav-h);
-display:grid;
-grid-template-columns:auto 1fr auto;
+display:flex;
 align-items:center;
-gap:1rem;
+gap:.7rem;
 padding:0 1.5rem;
 background:var(–glass);
 backdrop-filter:blur(24px) saturate(180%);
@@ -61,19 +60,25 @@ display:flex;align-items:center;gap:0.5rem;
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.09);
 border-radius:100px;
-padding:0 1rem;
-height:36px;
-max-width:400px;
-width:100%;
-transition:border-color .2s,background .2s;
+padding:0 .85rem;
+height:34px;
+width:200px;
+flex-shrink:0;
+transition:border-color .2s,background .2s,width .3s;
 }
+.n-search:focus-within{width:280px;}
 .n-search:focus-within{border-color:rgba(200,162,84,0.45);background:rgba(255,255,255,0.08);}
 [data-theme=“light”] .n-search{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0.1);}
 .n-search svg{flex-shrink:0;color:var(–text3);}
 .n-search input{background:none;border:none;outline:none;color:var(–text);font-family:‘Jost’,sans-serif;font-size:0.82rem;font-weight:300;width:100%;}
 .n-search input::placeholder{color:var(–text3);}
 /* Right side */
-.n-right{display:flex;align-items:center;gap:0.35rem;}
+.n-right{display:flex;align-items:center;gap:0.35rem;margin-left:auto;}
+/* inline toggles */
+.n-pill{display:flex;background:rgba(255,255,255,0.05);border:1px solid var(–border2);border-radius:100px;padding:2px;gap:1px;flex-shrink:0;}
+[data-theme=“light”] .n-pill{background:rgba(0,0,0,0.04);}
+.np{background:none;border:none;color:var(–text2);padding:.22rem .55rem;border-radius:100px;font-family:‘Jost’,sans-serif;font-size:.68rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.np.on{background:var(–gold);color:#000;font-weight:500;}
 
 /* Icon button */
 .nib{
@@ -220,7 +225,7 @@ padding:1rem 0 1.5rem;
 overflow:visible;
 }
 .spinner-box{
-width:180px;height:250px;
+width:160px;height:220px;
 position:relative;
 transform-style:preserve-3d;
 overflow:visible;
@@ -233,46 +238,24 @@ transition:transform .9s cubic-bezier(0.25,0.46,0.45,0.94);
 overflow:visible;
 }
 
-/* ─── PANEL (card flip) ─── */
+/* ─── PANEL (simple card, click = modal) ─── */
 .panel{
 position:absolute;
-width:180px;height:250px;
+width:160px;height:220px;
 left:0;top:0;
 cursor:pointer;
-transform-style:preserve-3d;
-transition:box-shadow .4s;
-user-select:none;
-}
-.panel.is-active{
-box-shadow:0 24px 60px rgba(0,0,0,.7),var(–shadow-gold);
-}
-/* Front & Back */
-.pf,.pb2{
-position:absolute;inset:0;
 border-radius:14px;
-backface-visibility:hidden;
--webkit-backface-visibility:hidden;
 overflow:hidden;
-transition:transform .6s cubic-bezier(0.34,1.05,0.64,1);
-}
-/* FRONT */
-.pf{
 background:var(–bg2);
 border:1px solid var(–border2);
-transform:rotateY(0deg);
-z-index:2;
+transition:border-color .4s,box-shadow .4s,transform .15s;
+user-select:none;
 }
-.panel.is-active .pf{transform:rotateY(-180deg);}
-/* BACK */
-.pb2{
-background:var(–bg2);
-border:1px solid rgba(200,162,84,.4);
-transform:rotateY(180deg);
-z-index:1;
-display:flex;flex-direction:column;
-padding:.9rem;
+.panel:active{transform:scale(0.97);}
+.panel.is-active{
+border-color:rgba(200,162,84,.5);
+box-shadow:0 20px 50px rgba(0,0,0,.7),var(–shadow-gold);
 }
-.panel.is-active .pb2{transform:rotateY(0deg);z-index:3;}
 
 /* Front image */
 .p-img-wrap{position:absolute;inset:0;z-index:0;overflow:hidden;border-radius:14px;}
@@ -288,18 +271,6 @@ padding:.9rem;
 .p-name{font-family:‘Cormorant Garamond’,serif;font-size:.95rem;font-weight:300;color:#fff;line-height:1.2;text-shadow:0 1px 5px rgba(0,0,0,.7);}
 /* light img */
 .panel.li .p-name{color:#111 !important;text-shadow:0 1px 3px rgba(255,255,255,.5) !important;}
-
-/* Back content */
-.pb2-cat{font-size:.5rem;color:var(–gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem;opacity:.85;}
-.pb2-name{font-family:‘Cormorant Garamond’,serif;font-size:1rem;font-weight:300;color:var(–text);line-height:1.2;margin-bottom:.6rem;}
-.pb2-price{font-family:‘Cormorant Garamond’,serif;font-size:1.25rem;color:var(–gold);margin-bottom:.15rem;line-height:1;}
-.pb2-price span{font-size:.62rem;color:var(–text2);font-family:‘Jost’,sans-serif;}
-.pb2-fields{flex:1;margin-bottom:.5rem;overflow:hidden;}
-.pb2-row{display:flex;justify-content:space-between;padding:.2rem 0;font-size:.62rem;border-bottom:1px solid var(–border2);}
-.pb2-row:last-child{border-bottom:none;}
-.pb2-lbl{color:var(–text2);}
-.pb2-val{color:var(–text);}
-.pb2-btns{display:flex;gap:.35rem;padding-top:.3rem;}
 
 /* ─── SPINNER NAV ─── */
 .spin-nav{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:.8rem;}
@@ -486,14 +457,61 @@ padding:.9rem;
 .cart-tr span:last-child{color:var(–gold);}
 
 /* ─── TOAST ─── */
+.n-mobile-only{display:none;}
+.n-desk-only{display:flex;}
+@media(max-width:580px){
+.n-mobile-only{display:flex;}
+.n-desk-only{display:none;}
+}
+.det-name{font-family:‘Cormorant Garamond’,serif;font-size:1.4rem;font-weight:300;margin-bottom:.5rem;color:var(–text);}
+.det-price{font-family:‘Cormorant Garamond’,serif;font-size:1.6rem;color:var(–gold);margin-bottom:1rem;line-height:1;}
+.det-price span{font-size:1rem;color:var(–text2);font-family:‘Jost’,sans-serif;}
 .toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(–gold);color:#000;padding:.6rem 1.6rem;border-radius:2px;font-size:.68rem;font-weight:500;letter-spacing:.1em;z-index:999;pointer-events:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(200,162,84,.4);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
-@media(max-width:640px){
-nav{padding:0 .8rem;gap:.5rem;}
-.n-search{max-width:none;}
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+/* Nav: hide user info text on tablet */
 .n-uinfo{display:none;}
 .n-caret{display:none;}
+}
+@media(max-width:580px){
+/* Mobile nav */
+nav{padding:0 .75rem;gap:.4rem;}
+.n-logo{font-size:1.3rem;}
+.n-search{width:130px;padding:0 .6rem;height:32px;}
+.n-search:focus-within{width:170px;}
+.n-search input{font-size:.75rem;}
+/* Hide lang/theme pills on small screens - use settings instead */
+.n-pill{display:none;}
+/* Smaller icons */
+.nib{width:30px;height:30px;}
+
+/* Shop: full width spinner */
+.spinner-stage{padding:.5rem 0 1rem;}
+.cat-pills{gap:.3rem;padding:0 .5rem;}
+.cp{padding:.28rem .6rem;font-size:.6rem;}
+
+/* Detail modal full screen on mobile */
+.md{max-width:100%;border-radius:18px 18px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:92vh;}
+.mo{align-items:flex-end;padding:0;}
+
+/* Grid: 2 columns */
+.pgrid{grid-template-columns:repeat(2,1fr);gap:.5rem;}
+.gc-body{padding:.6rem .65rem;}
+.gc-name{font-size:.82rem;}
+
+/* Hero */
+.hero-btns{flex-direction:column;align-items:center;}
+.hbtn{width:200px;text-align:center;}
+
+/* Cart panel full width */
+.cart-pn{width:100vw;}
+}
+@media(min-width:1024px){
+/* Desktop: wider search, show all */
+.n-search{width:260px;}
+.n-search:focus-within{width:340px;}
 }
 </style>
 
@@ -517,14 +535,28 @@ nav{padding:0 .8rem;gap:.5rem;}
   <!-- Right -->
 
   <div class="n-right">
+    <!-- LANG toggle - always visible -->
+    <div class="n-pill">
+      <button class="np on" id="l-mn" onclick="setLang('mn')">МН</button>
+      <button class="np" id="l-en" onclick="setLang('en')">EN</button>
+    </div>
+    <!-- THEME toggle - always visible -->
+    <div class="n-pill">
+      <button class="np on" id="t-dark" onclick="setTheme('dark')">🌙</button>
+      <button class="np" id="t-light" onclick="setTheme('light')">☀️</button>
+    </div>
     <!-- Cart -->
     <button class="nib" onclick="toggleCart()">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       <div class="n-badge" id="cart-count">0</div>
     </button>
-    <!-- Settings -->
-    <button class="nib" onclick="toggleSD()" id="sd-btn">
+    <!-- Settings (mobile: shows lang/theme) -->
+    <button class="nib n-mobile-only" onclick="toggleMobileSD()" id="mobile-sd-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <!-- Admin key (desktop) -->
+    <button class="nib n-desk-only" onclick="tryAdmin()" title="Admin">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
     </button>
     <div class="n-sep"></div>
     <!-- Auth -->
@@ -554,29 +586,6 @@ nav{padding:0 .8rem;gap:.5rem;}
     </div>
   </div>
 </nav>
-
-<!-- Settings dropdown (outside nav for positioning) -->
-
-<div class="n-settings-dd" id="s-dd">
-  <div class="nsd-row">
-    <span class="nsd-lbl" data-mn="Загвар" data-en="Theme">Загвар</span>
-    <div class="ntg">
-      <button class="nt on" id="t-dark" onclick="setTheme('dark')">🌙</button>
-      <button class="nt" id="t-light" onclick="setTheme('light')">☀️</button>
-    </div>
-  </div>
-  <div class="nsd-row">
-    <span class="nsd-lbl" data-mn="Хэл" data-en="Language">Хэл</span>
-    <div class="ntg">
-      <button class="nt on" id="l-mn" onclick="setLang('mn')">МН</button>
-      <button class="nt" id="l-en" onclick="setLang('en')">EN</button>
-    </div>
-  </div>
-  <div class="nsd-row">
-    <span class="nsd-lbl" data-mn="Админ" data-en="Admin">Админ</span>
-    <button class="nt" onclick="tryAdmin();closeSD()">🔑</button>
-  </div>
-</div>
 
 <!-- ─── PAGES ─── -->
 
@@ -837,6 +846,38 @@ nav{padding:0 .8rem;gap:.5rem;}
   </div>
 </div>
 
+<!-- DETAIL MODAL -->
+
+<div class="mo" id="det-m">
+  <div class="md md-lg">
+    <div class="mh"><div class="mt" id="det-title" data-mn="Дэлгэрэнгүй" data-en="Detail">Дэлгэрэнгүй</div><button class="mc" onclick="closeM('det-m')">✕</button></div>
+    <div class="mb" id="det-body"></div>
+  </div>
+</div>
+
+<!-- MOBILE SETTINGS DROPDOWN -->
+
+<div class="n-settings-dd" id="mobile-sd">
+  <div class="nsd-row">
+    <span class="nsd-lbl" data-mn="Загвар" data-en="Theme">Загвар</span>
+    <div class="ntg">
+      <button class="nt on" id="t-dark-m" onclick="setTheme('dark')">🌙</button>
+      <button class="nt" id="t-light-m" onclick="setTheme('light')">☀️</button>
+    </div>
+  </div>
+  <div class="nsd-row">
+    <span class="nsd-lbl" data-mn="Хэл" data-en="Language">Хэл</span>
+    <div class="ntg">
+      <button class="nt on" id="l-mn-m" onclick="setLang('mn')">МН</button>
+      <button class="nt" id="l-en-m" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+  <div class="nsd-row">
+    <span class="nsd-lbl" data-mn="Админ" data-en="Admin">Админ</span>
+    <button class="nt" onclick="tryAdmin();document.getElementById('mobile-sd').classList.remove('open')">🔑</button>
+  </div>
+</div>
+
 <!-- SLIDE PANEL -->
 
 <div class="sl-ov" id="sl-ov" onclick="closeSL()"></div>
@@ -929,6 +970,13 @@ function animBg(){
   }
   af=requestAnimationFrame(animBg);
 }
+function toggleMobileSD(){document.getElementById('mobile-sd').classList.toggle('open');}
+document.addEventListener('click',function(e){
+  const btn=document.getElementById('mobile-sd-btn');
+  const dd=document.getElementById('mobile-sd');
+  if(dd&&btn&&!btn.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
+});
+function hideImg(el){el.style.display='none';}
 function startBg(){resizeCnv();initStars();initClouds();if(af)cancelAnimationFrame(af);animBg();}
 window.addEventListener('resize',()=>{resizeCnv();initStars();initClouds();});
 
@@ -936,19 +984,18 @@ window.addEventListener('resize',()=>{resizeCnv();initStars();initClouds();});
 function t(mn,en){return lang==='mn'?mn:en;}
 function setLang(l){
   lang=l;
-  document.getElementById('l-mn').classList.toggle('on',l==='mn');
-  document.getElementById('l-en').classList.toggle('on',l==='en');
+  document.querySelectorAll('#l-mn,#l-mn-m').forEach(el=>el.classList.toggle('on',l==='mn'));
+  document.querySelectorAll('#l-en,#l-en-m').forEach(el=>el.classList.toggle('on',l==='en'));
   document.querySelectorAll('[data-mn]').forEach(el=>{if(el.tagName==='INPUT'||el.tagName==='TEXTAREA')return;el.innerHTML=l==='mn'?el.dataset.mn:el.dataset.en;});
   // Update search placeholder
-  const inp=document.getElementById('search-inp');
-  if(inp)inp.placeholder=l==='mn'?'Бараа хайх...':'Search products...';
+  document.querySelectorAll('#search-inp').forEach(inp=>inp.placeholder=l==='mn'?'Бараа хайх...':'Search products...');
   renderShop();renderTrack();
 }
 function setTheme(th){
   theme=th;
   document.documentElement.setAttribute('data-theme',th);
-  document.getElementById('t-dark').classList.toggle('on',th==='dark');
-  document.getElementById('t-light').classList.toggle('on',th==='light');
+  document.querySelectorAll('#t-dark,#t-dark-m').forEach(el=>el.classList.toggle('on',th==='dark'));
+  document.querySelectorAll('#t-light,#t-light-m').forEach(el=>el.classList.toggle('on',th==='light'));
   initStars();initClouds();
 }
 
@@ -1003,32 +1050,38 @@ function renderSpinner(prods){
   if(!prods.length){sp.innerHTML=`<div style="color:var(--text2);padding:2rem;font-size:.82rem;text-align:center">${t('Бараа байхгүй','No products')}</div>`;dots.innerHTML='';return;}
   const cnt=Math.min(prods.length+(currentUser?.isAdmin?1:0),8);
   const step=360/cnt;
-  const radius=Math.round((180/2)/Math.tan(Math.PI/cnt))+20;
+  const radius=Math.round((160/2)/Math.tan(Math.PI/cnt))+40;
   spinTotal=cnt;
   if(carouselIdx>=cnt)carouselIdx=0;
   let html='';
   prods.slice(0,cnt-(currentUser?.isAdmin?1:0)).forEach((p,i)=>{
     const cat=cats.find(c=>c.id===p.cat);
-    const fRows=Object.entries(p.fields||{}).slice(0,4).map(([k,v])=>`<div class="pb2-row"><span class="pb2-lbl">${k}</span><span class="pb2-val">${v}</span></div>`).join('');
-    html+=`<div class="panel${i===carouselIdx?' is-active':''}" style="transform:rotateY(${step*i}deg) translateZ(${radius}px)" onclick="panelClick(${i},${p.id})">
-      <div class="pf">
-        <div class="p-img-wrap">${p.media?`<img class="p-img" src="${p.media}" onerror="this.parentElement.innerHTML='<div class=p-emoji>${p.emoji||'📦'}</div>'">`:`<div class="p-emoji">${p.emoji||'📦'}</div>`}${p.media?'<div class="p-img-ov"></div>':''}</div>
-        <div class="p-status ${p.status==='ready'?'s-ready':'s-pre'}">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>
-        <div class="p-body"><div class="p-cat">${cat?cat.icon+' '+cat.name:p.cat}</div><div class="p-name">${p.name}</div></div>
-      </div>
-      <div class="pb2">
-        <div class="pb2-cat">${cat?cat.icon+' '+cat.name:p.cat}</div>
-        <div class="pb2-name">${p.name}</div>
-        <div class="pb2-price">₮${Number(p.pmn).toLocaleString()} <span>/ $${p.pusd}</span></div>
-        <div class="pb2-fields">${fRows}</div>
-        <div class="pb2-btns" onclick="event.stopPropagation()">
-          <button class="btn-g btn-sm" style="flex:1" onclick="openBuy(${p.id})">${t('Авах','Buy')}</button>
-          <button class="btn-o btn-sm" style="flex:1" onclick="openOrder(${p.id})">${t('Захиалах','Order')}</button>
-        </div>
-      </div>
-    </div>`;
+    const isAct=i===carouselIdx;
+    const imgHtml=p.media
+      ?('<img class="p-img" src="'+p.media+'" onerror="hideImg(this)">')
+      :('<div class="p-emoji">'+(p.emoji||'📦')+'</div>');
+    const ovHtml=p.media?'<div class="p-img-ov"></div>':'';
+    const statusCls=p.status==='ready'?'s-ready':'s-pre';
+    const statusTxt=p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order');
+    const catTxt=cat?(cat.icon+' '+cat.name):p.cat;
+    html+='<div class="panel'+(isAct?' is-active':'')+'"'
+      +' style="transform:rotateY('+(step*i)+'deg) translateZ('+radius+'px)"'
+      +' onclick="panelClick('+i+','+p.id+')">'
+      +'<div class="p-img-wrap">'+imgHtml+ovHtml+'</div>'
+      +'<div class="p-status '+statusCls+'">'+statusTxt+'</div>'
+      +'<div class="p-body">'
+      +'<div class="p-cat">'+catTxt+'</div>'
+      +'<div class="p-name">'+p.name+'</div>'
+      +'</div>'
+      +'</div>';
   });
-  if(currentUser?.isAdmin){const i=cnt-1;html+=`<div class="panel" style="transform:rotateY(${step*i}deg) translateZ(${radius}px);border:1px dashed var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3)" onclick="panelClick(${i},0)"><div style="font-size:2rem;margin-bottom:.4rem">＋</div><div style="font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-family:'Jost',sans-serif">${t('Нэмэх','Add')}</div></div>`;}
+  if(currentUser?.isAdmin){
+    const i=cnt-1;
+    html+='<div class="panel" style="transform:rotateY('+(step*i)+'deg) translateZ('+radius+'px);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);border:1px dashed var(--border)" onclick="panelClick('+i+',0)">'
+      +'<div style="font-size:2rem">＋</div>'
+      +'<div style="font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-family:Jost,sans-serif">'+t('Нэмэх','Add')+'</div>'
+      +'</div>';
+  }
   sp.innerHTML=html;
   sp.style.transform=`rotateY(${spinAngleDeg}deg)`;
   sp.querySelectorAll('.panel').forEach(pan=>{
@@ -1086,20 +1139,33 @@ function renderGrid(prods){
   const page=prods.slice((gridPage-1)*PER,gridPage*PER);
   let html=page.map(p=>{
     const cat=cats.find(c=>c.id===p.cat);
-    const imgH=p.media?`<img src="${p.media}" onerror="this.style.display='none'">`:`<span style="font-size:2.5rem">${p.emoji||'📦'}</span>`;
-    const badge=`<div class="p-status ${p.status==='ready'?'s-ready':'s-pre'}" style="position:absolute;top:.5rem;left:.5rem">${p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order')}</div>`;
-    return `<div class="gc" onclick="openDetail(${p.id})">
-      <div class="gc-img" style="position:relative">${imgH}${badge}</div>
-      <div class="gc-body"><div class="gc-cat">${cat?cat.icon+' '+cat.name:p.cat}</div><div class="gc-name">${p.name}</div><div class="gc-meta">${Object.entries(p.fields||{}).slice(0,2).map(([k,v])=>`${k}: ${v}`).join(' · ')}</div>
-      <div class="gc-foot"><div class="gc-price">₮${Number(p.pmn).toLocaleString()}<small>$${p.pusd}</small></div>
-      <div onclick="event.stopPropagation()" style="display:flex;gap:.3rem"><button class="btn-g btn-sm" onclick="openBuy(${p.id})">${t('Авах','Buy')}</button><button class="btn-o btn-sm" onclick="openOrder(${p.id})">${t('Захиалах','Order')}</button></div></div></div></div>`;
+    const sc=p.status==='ready'?'s-ready':'s-pre';
+    const st=p.status==='ready'?t('Бэлэн','Ready'):t('Захиалгаар','Pre-order');
+    const meta=Object.entries(p.fields||{}).slice(0,2).map(function(e){return e[0]+': '+e[1];}).join(' · ');
+    const img=p.media?('<img src="'+p.media+'" onerror="hideImg(this)">'):('<span style="font-size:2.5rem">'+(p.emoji||'📦')+'</span>');
+    return '<div class="gc" onclick="openDetail('+p.id+')">'
+      +'<div class="gc-img" style="position:relative">'+img+'<div class="p-status '+sc+'" style="position:absolute;top:.5rem;left:.5rem">'+st+'</div></div>'
+      +'<div class="gc-body">'
+      +'<div class="gc-cat">'+(cat?cat.icon+' '+cat.name:p.cat)+'</div>'
+      +'<div class="gc-name">'+p.name+'</div>'
+      +'<div class="gc-meta">'+meta+'</div>'
+      +'<div class="gc-foot">'
+      +'<div class="gc-price">₮'+Number(p.pmn).toLocaleString()+'<small>$'+p.pusd+'</small></div>'
+      +'<div onclick="event.stopPropagation()" style="display:flex;gap:.3rem">'
+      +'<button class="btn-g btn-sm" onclick="openBuy('+p.id+')">'+t('Авах','Buy')+'</button>'
+      +'<button class="btn-o btn-sm" onclick="openOrder('+p.id+')">'+t('Захиалах','Order')+'</button>'
+      +'</div></div></div></div>';
   }).join('');
-  if(currentUser?.isAdmin)html+=`<div class="add-card" onclick="openAddProd()"><div style="font-size:1.8rem">＋</div><div style="font-size:.7rem;letter-spacing:.08em;text-transform:uppercase">${t('Бараа нэмэх','Add Product')}</div></div>`;
+  if(currentUser?.isAdmin)html+='<div class="add-card" onclick="openAddProd()"><div style="font-size:1.8rem">＋</div><div style="font-size:.7rem;letter-spacing:.08em;text-transform:uppercase">'+t('Бараа нэмэх','Add Product')+'</div></div>';
   document.getElementById('pgrid').innerHTML=html;
   const pgn=document.getElementById('pgn');
   if(total<=1){pgn.innerHTML='';return;}
-  pgn.innerHTML=`<button class="pgn-btn" onclick="gridPage--;renderShop()" ${gridPage===1?'disabled':''}>‹</button>`+Array.from({length:total},(_,i)=>`<button class="pgn-btn${i+1===gridPage?' on':''}" onclick="gridPage=${i+1};renderShop()">${i+1}</button>`).join('')+`<button class="pgn-btn" onclick="gridPage++;renderShop()" ${gridPage===total?'disabled':''}>›</button>`;
+  let pbtns='<button class="pgn-btn" onclick="gridPage--;renderShop()" '+(gridPage===1?'disabled':'')+'>‹</button>';
+  for(let i=0;i<total;i++)pbtns+='<button class="pgn-btn'+(i+1===gridPage?' on':'')+'" onclick="gridPage='+(i+1)+';renderShop()">'+(i+1)+'</button>';
+  pbtns+='<button class="pgn-btn" onclick="gridPage++;renderShop()" '+(gridPage===total?'disabled':'')+'>›</button>';
+  pgn.innerHTML=pbtns;
 }
+
 function setView(v){
   viewMode=v;
   document.getElementById('vb-spin').classList.toggle('on',v==='spin');
@@ -1135,21 +1201,30 @@ document.addEventListener('keydown',e=>{
 function openDetail(id){
   selProd=products.find(p=>p.id===id);if(!selProd)return;
   const cat=cats.find(c=>c.id===selProd.cat);
-  document.getElementById('sl-hero').innerHTML=selProd.media?`<img class="sl-img" src="${selProd.media}">`:`<div class="sl-emoji">${selProd.emoji||'📦'}</div>`;
-  document.getElementById('sl-hero').insertAdjacentHTML('beforeend','<div class="sl-grad"></div>');
-  document.getElementById('sl-name').textContent=selProd.name;
-  document.getElementById('sl-cat').textContent=cat?cat.icon+' '+cat.name:selProd.cat;
-  document.getElementById('sl-desc').textContent=selProd.desc||'';
-  document.getElementById('sl-fields').innerHTML=[['Статус',selProd.status==='ready'?'✅ '+t('Бэлэн','Ready'):'🟠 '+t('Захиалгаар','Pre-order')],...Object.entries(selProd.fields||{}),...(selProd.oinfo?[[t('Мэдээлэл','Info'),selProd.oinfo]]:[])].map(([k,v])=>`<div class="sl-row"><span class="sl-lbl">${k}</span><span>${v}</span></div>`).join('');
-  document.getElementById('sl-price').innerHTML=`₮${Number(selProd.pmn).toLocaleString()} <span>/ $${selProd.pusd}</span>`;
-  document.getElementById('sl-buy').textContent=t('Авах','Buy Now');
-  document.getElementById('sl-ord').textContent=t('Захиалах','Pre-order');
-  document.getElementById('sl-ov').classList.add('open');
-  document.getElementById('sl-pn').classList.add('open');
+  const fields=[['Статус',selProd.status==='ready'?'✅ '+t('Бэлэн','Ready'):'🟠 '+t('Захиалгаар','Pre-order')],...Object.entries(selProd.fields||{}),...(selProd.oinfo?[[t('Мэдээлэл','Info'),selProd.oinfo]]:[])].map(([k,v])=>`<div class="dfr"><span class="dfl">${k}</span><span>${v}</span></div>`).join('');
+  const imgSection=selProd.media
+    ?('<img src="'+selProd.media+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="hideImg(this)">')
+    :('');
+  const descHtml=selProd.desc?('<div style="font-size:.82rem;color:var(--text2);line-height:1.65;margin-bottom:.9rem">'+selProd.desc+'</div>'):'';
+  document.getElementById('det-body').innerHTML=
+    '<div style="position:relative;overflow:hidden;border-radius:12px;margin-bottom:1.1rem;aspect-ratio:16/9;background:var(--bg3)">'
+      +imgSection
+      +'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4.5rem">'+(selProd.media?'':selProd.emoji||'📦')+'</div>'
+    +'</div>'
+    +'<div style="font-size:.56rem;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem">'+(cat?cat.icon+' '+cat.name:selProd.cat)+'</div>'
+    +'<div class="det-name">'+selProd.name+'</div>'
+    +descHtml
+    +'<div class="df" style="margin-bottom:1rem">'+fields+'</div>'
+    +'<div class="det-price">₮'+Number(selProd.pmn).toLocaleString()+' <span>/ $'+selProd.pusd+'</span></div>'
+    +'<div style="display:flex;gap:.7rem">'
+    +'<button class="btn-g w100" style="padding:.78rem" onclick="closeM(&quot;det-m&quot;);openBuy('+selProd.id+')">'+t('Авах','Buy Now')+'</button>'
+    +'<button class="btn-o w100" style="padding:.78rem" onclick="closeM(&quot;det-m&quot;);openOrder('+selProd.id+')">'+t('Захиалах','Pre-order')+'</button>'
+    +'</div>';
+  openM('det-m');
 }
-function closeSL(){document.getElementById('sl-ov').classList.remove('open');document.getElementById('sl-pn').classList.remove('open');}
-function slBuy(){closeSL();if(selProd)openBuy(selProd.id);}
-function slOrd(){closeSL();if(selProd)openOrder(selProd.id);}
+function closeSL(){}
+function slBuy(){if(selProd)openBuy(selProd.id);}
+function slOrd(){if(selProd)openOrder(selProd.id);}
 
 /* ── ADDRESS ── */
 function updDist(){const c=document.getElementById('buy-city').value;const list=DISTRICTS[c]||Array.from({length:8},(_,i)=>`${i+1}-р сум`);document.getElementById('buy-district').innerHTML='<option value="">-- Сонгох --</option>'+list.map(d=>`<option>${d}</option>`).join('');document.getElementById('buy-khoroo').innerHTML='<option value="">-- Сонгох --</option>';}
