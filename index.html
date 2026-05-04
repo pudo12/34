@@ -38,9 +38,10 @@ body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-w
 nav{
 position:fixed;top:0;left:0;right:0;z-index:500;
 height:var(–nav-h);
-display:flex;
+display:grid;
+grid-template-columns:auto 1fr auto;
 align-items:center;
-gap:.7rem;
+gap:1rem;
 padding:0 1.5rem;
 background:var(–glass);
 backdrop-filter:blur(24px) saturate(180%);
@@ -60,20 +61,22 @@ display:flex;align-items:center;gap:0.5rem;
 background:rgba(255,255,255,0.05);
 border:1px solid rgba(255,255,255,0.09);
 border-radius:100px;
-padding:0 .85rem;
+padding:0 1rem;
 height:34px;
-width:200px;
-flex-shrink:0;
-transition:border-color .2s,background .2s,width .3s;
+width:100%;
+max-width:360px;
+margin:0 auto;
+transition:border-color .2s,background .2s;
 }
-.n-search:focus-within{width:280px;}
+.n-search:focus-within{border-color:rgba(200,162,84,.4);background:rgba(255,255,255,.08);}
+[data-theme=“light”] .n-search{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);}
 .n-search:focus-within{border-color:rgba(200,162,84,0.45);background:rgba(255,255,255,0.08);}
 [data-theme=“light”] .n-search{background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0.1);}
 .n-search svg{flex-shrink:0;color:var(–text3);}
 .n-search input{background:none;border:none;outline:none;color:var(–text);font-family:‘Jost’,sans-serif;font-size:0.82rem;font-weight:300;width:100%;}
 .n-search input::placeholder{color:var(–text3);}
 /* Right side */
-.n-right{display:flex;align-items:center;gap:0.35rem;margin-left:auto;}
+.n-right{display:flex;align-items:center;gap:0.35rem;justify-content:flex-end;}
 /* inline toggles */
 .n-pill{display:flex;background:rgba(255,255,255,0.05);border:1px solid var(–border2);border-radius:100px;padding:2px;gap:1px;flex-shrink:0;}
 [data-theme=“light”] .n-pill{background:rgba(0,0,0,0.04);}
@@ -203,11 +206,13 @@ position:relative;z-index:2;
 min-height:100vh;
 display:flex;flex-direction:column;
 align-items:center;
-padding:calc(var(–nav-h) + 1rem) 1rem 3rem;
+justify-content:center;
+padding:calc(var(–nav-h) + .5rem) 1rem 2rem;
 position:relative;z-index:1;
 }
 /* Cat pills */
-.cat-pills{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem;max-width:700px;width:100%;}
+.shop-controls{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:700px;margin-bottom:.5rem;}
+.cat-pills{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:.8rem;max-width:700px;width:100%;}
 .cp{background:none;border:1px solid var(–border2);color:var(–text2);padding:.35rem .85rem;border-radius:2px;font-family:‘Jost’,sans-serif;font-size:.66rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .22s;white-space:nowrap;}
 .cp.on,.cp:hover{background:var(–gold);color:#000;border-color:var(–gold);}
 
@@ -221,7 +226,7 @@ position:relative;z-index:1;
 perspective:1000px;
 display:flex;justify-content:center;align-items:center;
 width:100%;
-padding:1rem 0 1.5rem;
+padding:.5rem 0 .5rem;
 overflow:visible;
 }
 .spinner-box{
@@ -273,9 +278,20 @@ box-shadow:0 20px 50px rgba(0,0,0,.7),var(–shadow-gold);
 .panel.li .p-name{color:#111 !important;text-shadow:0 1px 3px rgba(255,255,255,.5) !important;}
 
 /* ─── SPINNER NAV ─── */
-.spin-nav{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:.8rem;}
-.snb{background:none;border:1px solid var(–border);color:var(–text2);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.snb:hover{border-color:var(–gold);color:var(–gold);}
+.spin-nav{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:.6rem;}
+.snb{
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.12);
+color:var(–text2);
+width:40px;height:40px;
+border-radius:50%;
+cursor:pointer;font-size:1.3rem;
+display:flex;align-items:center;justify-content:center;
+transition:all .2s;
+backdrop-filter:blur(8px);
+}
+.snb:hover{border-color:var(–gold);color:var(–gold);background:var(–gold-soft);}
+[data-theme=“light”] .snb{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);}
 .sdots{display:flex;gap:.4rem;align-items:center;}
 .sdot{width:4px;height:4px;border-radius:50%;background:var(–border2);cursor:pointer;transition:all .3s;}
 .sdot.on{background:var(–gold);width:14px;border-radius:2px;}
@@ -489,6 +505,7 @@ nav{padding:0 .75rem;gap:.4rem;}
 
 /* Shop: full width spinner */
 .spinner-stage{padding:.5rem 0 1rem;}
+.shop-controls{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:700px;margin-bottom:.5rem;}
 .cat-pills{gap:.3rem;padding:0 .5rem;}
 .cp{padding:.28rem .6rem;font-size:.6rem;}
 
@@ -612,8 +629,9 @@ nav{padding:0 .75rem;gap:.4rem;}
 
 <div class="page" id="page-shop">
   <div class="shop-page">
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:700px;margin-bottom:1rem;">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300" data-mn="Бүх бараа" data-en="All Products">Бүх бараа</div>
+    <!-- Top controls -->
+    <div class="shop-controls">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300" data-mn="Бүх бараа" data-en="All Products">Бүх бараа</div>
       <div class="view-tog">
         <button class="vtb on" id="vb-spin" onclick="setView('spin')">⊡</button>
         <button class="vtb" id="vb-grid" onclick="setView('grid')">⊞</button>
@@ -621,12 +639,13 @@ nav{padding:0 .75rem;gap:.4rem;}
     </div>
     <div class="cat-pills" id="shop-cats"></div>
     <!-- SPINNER -->
-    <div id="v-spin">
+    <div id="v-spin" style="display:flex;flex-direction:column;align-items:center;width:100%;">
       <div class="spinner-stage">
         <div class="spinner-box">
           <div class="spinner" id="spinner"></div>
         </div>
       </div>
+      <!-- NAV arrows below spinner -->
       <div class="spin-nav">
         <button class="snb" onclick="spinPrev()">‹</button>
         <div class="sdots" id="sdots"></div>
