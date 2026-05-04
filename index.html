@@ -204,18 +204,18 @@ position:relative;z-index:2;
 /* ─── SHOP ─── */
 /* Sub-nav: fixed below main nav */
 .shop-subnav{
-position:fixed;
+position:sticky;
 top:var(–nav-h);
 left:0;right:0;
 z-index:100;
 background:var(–glass);
 backdrop-filter:blur(20px);
 border-bottom:1px solid var(–border2);
-padding:.5rem 1.5rem .55rem;
+padding:.5rem 1.5rem .5rem;
 }
 .shop-subnav-top{
 display:flex;align-items:center;justify-content:space-between;
-margin-bottom:.4rem;
+margin-bottom:.35rem;
 }
 .shop-title{
 font-family:‘Cormorant Garamond’,serif;
@@ -223,13 +223,13 @@ font-size:1.1rem;font-weight:300;
 color:var(–text);letter-spacing:.04em;
 }
 
-/* Shop page: fill space below both navs, center spinner */
+/* Shop page: fill remaining viewport, center spinner */
 .shop-page{
-min-height:calc(100vh - var(–nav-h) - 72px);
+height:calc(100vh - var(–nav-h) - 80px);
 display:flex;flex-direction:column;
 align-items:center;
 justify-content:center;
-padding:calc(var(–nav-h) + 80px) 1rem 2rem;
+padding:0 1rem 3rem;
 position:relative;z-index:1;
 }
 /* Cat pills */
@@ -239,8 +239,7 @@ position:relative;z-index:1;
 .cp{background:none;border:1px solid var(–border2);color:var(–text2);padding:.3rem .75rem;border-radius:2px;font-family:‘Jost’,sans-serif;font-size:.64rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .22s;white-space:nowrap;flex-shrink:0;}
 .cp.on,.cp:hover{background:var(–gold);color:#000;border-color:var(–gold);}
 
-/* View toggle */
-.view-tog{display:flex;gap:.3rem;margin-bottom:1.2rem;}
+.view-tog{display:flex;gap:.3rem;}
 .vtb{background:none;border:1px solid var(–border2);color:var(–text2);width:28px;height:28px;border-radius:4px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .vtb.on{background:var(–gold);color:#000;border-color:var(–gold);}
 
@@ -301,7 +300,11 @@ box-shadow:0 20px 50px rgba(0,0,0,.7),var(–shadow-gold);
 .panel.li .p-name{color:#111 !important;text-shadow:0 1px 3px rgba(255,255,255,.5) !important;}
 
 /* ─── SPINNER NAV ─── */
-.spin-nav{display:flex;align-items:center;justify-content:center;gap:2rem;margin-top:2rem;}
+.spin-nav{
+display:flex;align-items:center;justify-content:center;
+gap:2rem;
+margin-top:1.8rem;
+}
 .snb{
 background:rgba(255,255,255,.06);
 border:1px solid rgba(255,255,255,.12);
@@ -650,12 +653,12 @@ nav{padding:0 .75rem;gap:.4rem;}
 
 <!-- SHOP -->
 
-<div class="page" id="page-shop">
-  <!-- Sub-nav: title + cats + view toggle (fixed below main nav) -->
+<div class="page" id="page-shop" style="padding-top:var(--nav-h)">
+  <!-- Sub-nav: title + cats + view toggle -->
   <div class="shop-subnav">
     <div class="shop-subnav-top">
       <span class="shop-title" data-mn="Бүх бараа" data-en="All Products">Бүх бараа</span>
-      <div class="view-tog">
+      <div class="view-tog" style="margin-bottom:0">
         <button class="vtb on" id="vb-spin" onclick="setView('spin')">⊡</button>
         <button class="vtb" id="vb-grid" onclick="setView('grid')">⊞</button>
       </div>
@@ -663,15 +666,15 @@ nav{padding:0 .75rem;gap:.4rem;}
     <div class="cat-pills" id="shop-cats"></div>
   </div>
 
+  <!-- Spinner area: fills remaining height -->
+
   <div class="shop-page">
-    <!-- SPINNER: centered on remaining viewport -->
-    <div id="v-spin">
+    <div id="v-spin" style="display:flex;flex-direction:column;align-items:center">
       <div class="spinner-stage">
         <div class="spinner-box">
           <div class="spinner" id="spinner"></div>
         </div>
       </div>
-      <!-- arrows: separated from spinner with margin -->
       <div class="spin-nav">
         <button class="snb" onclick="spinPrev()">‹</button>
         <div class="sdots" id="sdots"></div>
