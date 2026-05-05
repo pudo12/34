@@ -1082,18 +1082,78 @@ function showPage(p,anim='fade'){
   document.getElementById('u-dd')?.classList.remove('open');
   closeSD();
   window.scrollTo(0,0);
-  if(p==='shop'){carouselIdx=0;spinAngleDeg=0;renderShop();}
+  if(p==='shop'){carouselIdx=0;spinAngleDeg=0;spinMode='cats';renderShop();}
   if(p==='admin'){renderAProds();renderACats();renderAOrds();}
   if(p==='track')renderTrack();
 }
 
 /* ── SPINNER ── */
+let spinMode='cats'; // 'cats' = show categories, 'prods' = show products
+
 function renderShop(){
-  const allCats=[{id:'all',name:t('Бүгд','All'),icon:'🛍️'},...cats];
-  document.getElementById('shop-cats').innerHTML=allCats.map(c=>`<button class="cp ${currentCat===c.id?'on':''}" onclick="currentCat='${c.id}';carouselIdx=0;spinAngleDeg=0;gridPage=1;renderShop()">${c.icon} ${c.name}</button>`).join('');
-  const filtered=currentCat==='all'?[...products]:products.filter(p=>p.cat===currentCat);
-  if(viewMode==='spin')renderSpinner(filtered);
-  else renderGrid(filtered);
+  if(viewMode==='spin'){
+    if(spinMode==='cats'){
+      renderCatSpinner();
+    } else {
+      const filtered=currentCat==='all'?[...products]:products.filter(p=>p.cat===currentCat);
+      renderSpinner(filtered);
+    }
+    // update subnav pills to reflect current state
+    const allCats=[{id:'all',name:t('Бүгд','All'),icon:'🛍️'},...cats];
+    document.getElementById('shop-cats').innerHTML=
+      (spinMode==='prods'?'<button class="cp on" onclick="goBackToCats()">← '+t('Буцах','Back')+'</button>':'')
+      +allCats.map(cat=>'<button class="cp '+(currentCat===cat.id&&spinMode==='prods'?'on':'')+'" onclick="selectCat(&quot;'+cat.id+'&quot;)">'+cat.icon+' '+cat.name+'</button>').join('');
+  } else {
+    const allCats=[{id:'all',name:t('Бүгд','All'),icon:'🛍️'},...cats];
+    document.getElementById('shop-cats').innerHTML=allCats.map(function(cat){return '<button class="cp '+(currentCat===cat.id?'on':'')+'" onclick="selectCat2(this.dataset.id)" data-id="'+cat.id+'">'+cat.icon+' '+cat.name+'</button>';}).join('');
+    const filtered=currentCat==='all'?[...products]:products.filter(p=>p.cat===currentCat);
+    renderGrid(filtered);
+  }
+}
+
+function renderCatSpinner(){
+  const sp=document.getElementById('spinner');
+  const dots=document.getElementById('sdots');
+  // All + each category as cards
+  const items=[{id:'all',name:t('Бүгд','All'),icon:'🛍️',count:products.length},...cats.map(ct=>({id:ct.id,name:ct.name,icon:ct.icon,count:products.filter(p=>p.cat===ct.id).length}))];
+  const cnt=Math.min(items.length,8);
+  const step=360/cnt;
+  const radius=Math.round((180/2)/Math.tan(Math.PI/cnt))+55;
+  spinTotal=cnt;
+  if(carouselIdx>=cnt)carouselIdx=0;
+  let html='';
+  items.slice(0,cnt).forEach((item,i)=>{
+    // pick a product image from this category for background
+    const sample=item.id==='all'?products[0]:products.find(p=>p.cat===item.id);
+    const bg=sample&&sample.media?('background-image:url('+sample.media+');background-size:cover;background-position:center;'):'';
+    html+='<div class="panel'+(i===carouselIdx?' is-active':'')+'" style="transform:rotateY('+(step*i)+'deg) translateZ('+radius+'px)" onclick="catPanelClick('+i+',&quot;'+item.id+'&quot;)">'
+      +'<div class="p-img-wrap" style="'+bg+'background-color:var(--bg3)">'
+      +(bg?'<div class="p-img-ov"></div>':'<div class="p-emoji">'+item.icon+'</div>')
+      +'</div>'
+      +'<div class="p-body" style="background:linear-gradient(transparent,rgba(0,0,0,.85))">'
+      +'<div class="p-cat" style="color:var(--gold)">'+item.count+' '+t('бараа','items')+'</div>'
+      +'<div class="p-name">'+item.name+'</div>'
+      +'</div>'
+      +'</div>';
+  });
+  sp.innerHTML=html;
+  sp.style.transform='rotateY('+spinAngleDeg+'deg)';
+  dots.innerHTML=Array.from({length:cnt},(_,i)=>'<div class="sdot'+(i===carouselIdx?' on':'')+'" onclick="spinToIdx('+i+')"></div>').join('');
+}
+
+function selectCat2(el){var id=typeof el==="string"?el:el.dataset?el.dataset.id:el;currentCat=id;gridPage=1;renderShop();}
+function selectCat(id){currentCat=id;spinMode="prods";carouselIdx=0;spinAngleDeg=0;renderShop();}
+function goBackToCats(){spinMode="cats";carouselIdx=0;spinAngleDeg=0;renderShop();}
+function catPanelClick(idx,catId){
+  if(idx===carouselIdx){
+    // center card: go to products of this category
+    currentCat=catId;
+    spinMode='prods';
+    carouselIdx=0;spinAngleDeg=0;
+    renderShop();
+  } else {
+    spinToIdx(idx);
+  }
 }
 
 function imgBrightness(img,panel){
@@ -1178,22 +1238,38 @@ function spinToIdx(t2){
   renderSpinner(filtered);
 }
 function spinNext(){
-  const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
-  const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),8);
-  if(!total)return;
-  const step=360/total;
-  spinAngleDeg-=step;
-  carouselIdx=(carouselIdx+1)%total;
-  renderSpinner(filtered);
+  if(spinMode==='cats'){
+    const total=Math.min(cats.length+1,8);
+    const step=360/total;
+    spinAngleDeg-=step;
+    carouselIdx=(carouselIdx+1)%total;
+    renderCatSpinner();
+  } else {
+    const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+    const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),8);
+    if(!total)return;
+    const step=360/total;
+    spinAngleDeg-=step;
+    carouselIdx=(carouselIdx+1)%total;
+    renderSpinner(filtered);
+  }
 }
 function spinPrev(){
-  const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
-  const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),8);
-  if(!total)return;
-  const step=360/total;
-  spinAngleDeg+=step;
-  carouselIdx=(carouselIdx-1+total)%total;
-  renderSpinner(filtered);
+  if(spinMode==='cats'){
+    const total=Math.min(cats.length+1,8);
+    const step=360/total;
+    spinAngleDeg+=step;
+    carouselIdx=(carouselIdx-1+total)%total;
+    renderCatSpinner();
+  } else {
+    const filtered=currentCat==='all'?products:products.filter(p=>p.cat===currentCat);
+    const total=Math.min(filtered.length+(currentUser?.isAdmin?1:0),8);
+    if(!total)return;
+    const step=360/total;
+    spinAngleDeg+=step;
+    carouselIdx=(carouselIdx-1+total)%total;
+    renderSpinner(filtered);
+  }
 }
 
 /* ── GRID ── */
