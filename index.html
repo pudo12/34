@@ -224,33 +224,25 @@ color:var(–text);letter-spacing:.04em;
 
 /* Shop page: fill remaining viewport exactly, center spinner */
 .shop-page{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:space-between;
-padding:0 1rem;
-/* height = full viewport minus main nav minus subnav (~82px) */
-height:calc(100vh - var(–nav-h) - 82px);
 position:relative;z-index:1;
-overflow:hidden;
 }
-/* spinner wrapper: takes all available space, centers content */
 #v-spin{
+position:fixed;
+top:50%;left:50%;
+transform:translate(-50%,-50%);
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:center;
-flex:1;
-width:100%;
-padding-bottom:.5rem;
+z-index:10;
 }
-/* arrows: pinned to bottom with padding */
 .spin-nav-wrap{
-width:100%;
-padding:.8rem 0 1rem;
+position:fixed;
+bottom:2.5rem;
+left:0;right:0;
 display:flex;
 align-items:center;
 justify-content:center;
+z-index:50;
 }
 /* Cat pills */
 .shop-controls{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:700px;margin-bottom:.5rem;}
@@ -688,7 +680,7 @@ nav{padding:0 .75rem;gap:.4rem;}
 
   <!-- Spinner area: takes all available space -->
 
-  <div class="shop-page">
+  <div class="shop-page" id="shop-page">
     <div id="v-spin">
       <div class="spinner-stage">
         <div class="spinner-box">
@@ -1426,7 +1418,23 @@ let toastT;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);}
 
 /* ── INIT ── */
-window.addEventListener('load',()=>{startBg();renderShop();updCart();});
+function centerSpinner(){
+  const nav = document.querySelector('nav');
+  const subnav = document.querySelector('.shop-subnav');
+  const page = document.getElementById('shop-page');
+  if(!page || !nav || !subnav) return;
+  const navH = nav.offsetHeight;
+  const subH = subnav.offsetHeight;
+  const avail = window.innerHeight - navH - subH;
+  page.style.paddingTop = (navH + subH) + 'px';
+  page.style.minHeight = window.innerHeight + 'px';
+  page.style.display = 'flex';
+  page.style.flexDirection = 'column';
+  page.style.alignItems = 'center';
+  page.style.justifyContent = 'center';
+}
+window.addEventListener('load',()=>{startBg();renderShop();updCart();setTimeout(centerSpinner,100);});
+window.addEventListener('resize', centerSpinner);
 </script>
 
 </body>
